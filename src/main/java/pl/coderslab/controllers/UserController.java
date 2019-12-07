@@ -127,4 +127,11 @@ public class UserController {
         response.sendRedirect(request.getContextPath() + "/app/users");
     }
 
+    @GetMapping("/app/userProfile")
+    public String getUserProfile(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        model.addAttribute("user", userRepository.findOne((long) session.getAttribute("id")));
+        return "app/userProfile";
+    }
+
 }

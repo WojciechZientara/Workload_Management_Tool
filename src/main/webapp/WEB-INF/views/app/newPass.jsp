@@ -1,6 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@include file="/WEB-INF/assets/header.jsp"%>
+
+<c:if test="${user.passwordChanged}">
+    <%@include file="/WEB-INF/assets/menu.jsp"%>
+</c:if>
+
     <div id="main" class="mainFrame">
             <span id="login" class="landingPage">
             <form method="post">
