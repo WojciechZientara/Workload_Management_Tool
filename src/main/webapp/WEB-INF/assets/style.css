@@ -1,0 +1,144 @@
+body {
+    background-color: white;
+    text-align: center;
+}
+
+a{
+    text-decoration: none;
+}
+
+a.btn {
+    font-size: 13px;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #444444;
+    padding: 2px 6px 2px 6px;
+    border: 1px solid #AAA;
+    border-radius: 5px;
+}
+
+div.mainFrame {
+    display: inline-block;
+    background: white;
+    width: 98%;
+    padding: 10px;
+}
+
+#logo {
+    border-radius: 10px 10px 0px 0px;
+    border: 3px solid #ff8211;
+    border-bottom: 3px solid #ffa41a;
+    height: 120px;
+    background-color: #ffa41a;
+    line-height: 120px;
+}
+
+#logo a {
+    color: #ffffff;
+    font-size: 60px;
+    font-family: "Arial";
+    font-weight: bolder;
+    vertical-align: middle;
+
+}
+
+#menu {
+    border: 3px solid #ff8211;
+    border-bottom: 3px solid #ffa41a;
+    background-color: #ffa41a;
+    height: 20px;
+}
+
+#menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#menu li {
+    float: left;
+}
+
+#menu li.userProfile {
+    float: right;
+}
+
+#menu li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 0px 20px;
+    font-size: 16px;
+}
+
+#menu li a:hover {
+    color: red;
+}
+
+#userLogo {
+    color:transparent;
+    text-shadow: 0 0 0 orangered;"
+}
+
+#main {
+    border-left: 3px solid #ff8211;
+    border-right: 3px solid #ff8211;
+
+}
+
+#footer {
+    border-radius: 0px 0px 10px 10px;
+    border: 3px solid #ff8211;
+    border-top: 3px solid #ffa41a;
+    background-color: #ffa41a;
+    height: 20px;
+}
+
+.landingPage {
+    display: inline-block;
+    width: 40%;
+    vertical-align: middle;
+    padding: 20px;
+}
+
+#login {
+    text-align: left;
+    padding-left: 30px;
+}
+
+
+.submitBtn {
+    float: right;
+}
+
+.error {
+    color: red;
+    font-size: 11px;
+}
+
+.mainTable {
+    display: inline-block;
+    margin: 10px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 13px
+}
+.mainTable thead th {
+    background-color: orangered;
+    border: solid 1px orangered;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+.mainTable tbody td {
+    border: solid 1px #CCC;
+    padding: 10px;
+}
+
+div#tweetForm {
+    display: inline-block;
+    background: white;
+    padding: 10px;
+    width: 80%
+}

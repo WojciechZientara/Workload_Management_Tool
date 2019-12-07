@@ -1,7 +1,9 @@
 package pl.coderslab.entities;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "bau_reports")
-@Data
+@Getter @Setter
 @NoArgsConstructor
 public class BauReport {
 

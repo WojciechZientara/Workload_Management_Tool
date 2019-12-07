@@ -1,8 +1,9 @@
 package pl.coderslab.entities;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter @Setter
 @NoArgsConstructor
 public class User {
 
@@ -24,12 +25,28 @@ public class User {
     @NotBlank
     private String lastName;
 
+    @NotBlank
+    private String password;
+
+    private boolean isAdmin;
+
+    private boolean isPasswordChanged;
+
+    @NotBlank
+    @Email
+    @Column(unique = true)
+    private String email;
+
     @ManyToMany(mappedBy = "users")
-    private List<Client> client = new ArrayList<>();
+    private List<Client> clients = new ArrayList<>();
 
     private int dailyWorkingHours;
 
     @OneToMany(mappedBy = "user")
     private List<Activity> activities;
+
+    public void setPassword(String password) {
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+    }
 
 }

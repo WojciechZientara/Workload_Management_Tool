@@ -1,7 +1,9 @@
 package pl.coderslab.entities;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
@@ -10,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "clients")
-@Data
+@Getter @Setter
 @NoArgsConstructor
 public class Client {
 
@@ -24,7 +26,7 @@ public class Client {
     @ManyToMany
     private List<User> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "client", cascade = CascadeType.MERGE)
     private List<BauReport> bauReportList;
 
 }
