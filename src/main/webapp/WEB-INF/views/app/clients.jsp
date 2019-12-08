@@ -5,7 +5,7 @@
 <%@include file="/WEB-INF/assets/header.jsp"%>
 <%@include file="/WEB-INF/assets/menu.jsp"%>
 
-    <div id="main" class="mainBtn">
+    <div id="main" class="mainFrame">
         <br>
         <button class="mainBtn" onclick="window.location.href = '${pageContext.request.contextPath}/app/clients/add';">
             Dodaj klienta</button>

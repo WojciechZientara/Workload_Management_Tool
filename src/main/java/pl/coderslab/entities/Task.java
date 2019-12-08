@@ -1,6 +1,5 @@
 package pl.coderslab.entities;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +7,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import java.time.Duration;
 import java.util.List;
 
 @Entity
@@ -30,7 +28,7 @@ public class Task {
 
     private String type;
 
-    private Duration duration;
+    private long duration;
 
     @Nullable
     @ManyToOne
@@ -42,5 +40,10 @@ public class Task {
 
     @OneToMany(mappedBy = "task")
     private List<Activity> activities;
+
+    @Nullable
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

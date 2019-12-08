@@ -4,13 +4,17 @@
 
 <div id="menu" class="mainFrame">
     <ul>
-        <li><a href="${pageContext.request.contextPath}/app/main">Strona Główna</a></li>
-
-        <c:if test="${sessionScope.admin == 'true'}">
-            <li><a href="${pageContext.request.contextPath}/app/users">Użytkownicy</a></li>
-            <li><a href="${pageContext.request.contextPath}/app/clients">Klienci</a></li>
-            <li><a href="${pageContext.request.contextPath}/app/reports">Raporty</a></li>
-        </c:if>
+        <c:choose>
+            <c:when test="${sessionScope.admin == 'false'}" >
+                <li><a href="${pageContext.request.contextPath}/app/main">Kokpit</a></li>
+            </c:when>
+            <c:otherwise>
+                <li><a href="${pageContext.request.contextPath}/app/main">Dashboard</a></li>
+                <li><a href="${pageContext.request.contextPath}/app/users">Użytkownicy</a></li>
+                <li><a href="${pageContext.request.contextPath}/app/clients">Klienci</a></li>
+                <li><a href="${pageContext.request.contextPath}/app/reports">Raporty</a></li>
+            </c:otherwise>
+        </c:choose>
 
         <li class="userProfile"> <a href="${pageContext.request.contextPath}/app/userProfile">
             <span id="userLogo">&#x1f464;</span> ${sessionScope.userName}

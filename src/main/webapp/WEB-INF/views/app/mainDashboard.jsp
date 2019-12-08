@@ -6,7 +6,7 @@
 <%@include file="/WEB-INF/assets/menu.jsp"%>
 
 <div id="main" class="mainFrame">
-
+DASHBOARD!
 </div>
 
 <%@include file="/WEB-INF/assets/footer.jsp"%>
