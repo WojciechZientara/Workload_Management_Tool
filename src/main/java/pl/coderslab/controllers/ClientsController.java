@@ -91,7 +91,7 @@ public class ClientsController {
                 response.sendRedirect(request.getContextPath() + "/app/clients");
             }
         } catch (Exception e) {
-            return "app/register";
+            return "app/saveClient";
         }
         return null;
     }

@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +27,13 @@ public class BauReport {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
+    @NotNull
     private Client client;
 
-    private Duration sumOfDuration;
+    private long sumOfDuration;
 
     private long numberOfRuns;
 
-    private Duration averageDuration;
+    private long averageDuration;
 
 }

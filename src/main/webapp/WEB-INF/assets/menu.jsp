@@ -9,6 +9,7 @@
         <c:if test="${sessionScope.admin == 'true'}">
             <li><a href="${pageContext.request.contextPath}/app/users">Użytkownicy</a></li>
             <li><a href="${pageContext.request.contextPath}/app/clients">Klienci</a></li>
+            <li><a href="${pageContext.request.contextPath}/app/reports">Raporty</a></li>
         </c:if>
 
         <li class="userProfile"> <a href="${pageContext.request.contextPath}/app/userProfile">
