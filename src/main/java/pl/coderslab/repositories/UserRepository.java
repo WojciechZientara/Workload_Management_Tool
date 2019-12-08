@@ -18,6 +18,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT u FROM User u LEFT JOIN FETCH u.clients WHERE u.id = ?1")
     User findOneWithClients(long id);
 
+    @Query(value = "SELECT u FROM User u LEFT JOIN FETCH u.activities WHERE u.id = ?1")
+    User findOneWithActivities(long id);
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM clients_users WHERE users_id = ?1", nativeQuery = true)
