@@ -1,16 +1,15 @@
 package pl.coderslab.entities;
 
-import lombok.Data;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Entity
 @Table(name = "activities")
@@ -22,6 +21,8 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    private String name;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -32,6 +33,9 @@ public class Activity {
 
     private LocalTime endTime;
 
+    private Duration duration;
+
+    @Nullable
     @ManyToOne
     @JoinColumn(name = "task_id")
     private Task task;

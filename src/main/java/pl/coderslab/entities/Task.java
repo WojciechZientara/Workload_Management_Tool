@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -27,6 +28,9 @@ public class Task {
     private Client client;
 
     private String type;
+
+    @NumberFormat
+    private long estimatedDuration;
 
     private long duration;
 

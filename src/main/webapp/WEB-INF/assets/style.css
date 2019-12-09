@@ -10,11 +10,28 @@ a{
 a.btn {
     font-size: 13px;
     text-decoration: none;
-    background-color: #EEEEEE;
+    background-color: #EEE;
     color: #444444;
     padding: 2px 6px 2px 6px;
     border: 1px solid #AAA;
     border-radius: 5px;
+}
+
+a.btn:hover {
+    background-color: #DDD;
+}
+
+.mainBtn {
+    padding: 4px 10px;
+    border-radius: 5px;
+    text-shadow: none;
+    border: 1px solid #999;
+    margin: 2px;
+    background-color: #EEE;
+}
+
+.mainBtn:hover {
+    background-color: #DDD;
 }
 
 div.mainFrame {
@@ -136,9 +153,44 @@ div.mainFrame {
     padding: 10px;
 }
 
-div#tweetForm {
-    display: inline-block;
-    background: white;
+div.activities {
+    margin: 30px;
     padding: 10px;
-    width: 80%
+    display: inline-block;
+    text-align: left;
+    border: 2px solid #ff8211;
+    border-radius: 5px;
+}
+
+#startWork {
+    display: inline-block;
+    float: left;
+    text-align: center;
+}
+
+#endWork {
+    display: inline-block;
+    float: right;
+    text-align: center;
+}
+
+#startWorkBtn {
+    border: 2px solid forestgreen;
+}
+
+#endWorkBtn {
+    float: right;
+    border: 2px solid orangered;
+}
+
+#stop {
+    border: 2px solid #999;
+}
+
+#activate {
+    border: 2px solid #999;
+}
+
+.dropdown {
+    width: 350px;
 }
