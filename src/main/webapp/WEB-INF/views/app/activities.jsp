@@ -24,13 +24,13 @@
                             <td>${activity.startTime}</td>
                             <td>${activity.endTime}</td>
 
-                            <c:set var="Hours" value="${fn:substringBefore(activity.duration.getSeconds() div 3600, '.')}"/>
-                            <c:set var="SecondsLeft" value="${activity.duration.getSeconds() - (3600 * Hours)}"/>
+                            <c:set var="Hours" value="${fn:substringBefore(activity.duration div 3600, '.')}"/>
+                            <c:set var="SecondsLeft" value="${activity.duration - (3600 * Hours)}"/>
                             <c:set var="Minutes" value="${fn:substringBefore(SecondsLeft div 60, '.')}"/>
-                            <c:set var="SecondsLeft" value="${activity.duration.getSeconds() - (3600 * Hours) - (60 * Minutes)}"/>
+                            <c:set var="SecondsLeft" value="${activity.duration - (3600 * Hours) - (60 * Minutes)}"/>
                             <td>
                                 <c:choose>
-                                    <c:when test="${activity.duration.getSeconds() == null}"></c:when>
+                                    <c:when test="${activity.duration == 0}"></c:when>
                                     <c:otherwise>
                                         <c:if test="${Hours < 10}">0</c:if>${Hours}:<c:if test="${Minutes < 10}">0</c:if>${Minutes}:<c:if test="${SecondsLeft < 10}">0</c:if>${SecondsLeft}
                                     </c:otherwise>

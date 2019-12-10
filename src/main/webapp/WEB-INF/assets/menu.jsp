@@ -14,6 +14,7 @@
                 <li><a href="${pageContext.request.contextPath}/app/users">Użytkownicy</a></li>
                 <li><a href="${pageContext.request.contextPath}/app/clients">Klienci</a></li>
                 <li><a href="${pageContext.request.contextPath}/app/reports">Raporty</a></li>
+                <li><a href="${pageContext.request.contextPath}/app/activities/all">Aktywność</a></li>
             </c:otherwise>
         </c:choose>
 

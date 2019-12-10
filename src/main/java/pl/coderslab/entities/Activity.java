@@ -33,7 +33,7 @@ public class Activity {
 
     private LocalTime endTime;
 
-    private Duration duration;
+    private long duration;
 
     @Nullable
     @ManyToOne
