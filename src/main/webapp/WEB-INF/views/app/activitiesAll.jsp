@@ -36,93 +36,75 @@
         <br>
     </div>
 
-['Bazyli Kopytko', 60, 48, 28, 20, 20, 60, 48, 15, 20, 20, 11]<br><br>
-
-
-<c:set var = "noUsers" value = "${fn:length(activitiesDto.timesMatrix)}"/>
-<c:forEach items="${activitiesDto.timesMatrix}" var="record" varStatus="i">
-    <c:set var = "length" value = "${fn:length(record)}"/>
-    ['${record[0]}',
-    <c:forEach items="${record}" var="value" begin="1" varStatus="step">
-        ${value}<c:if test="${step.index < length-1}">,</c:if><c:if test="${step.index == length-1}">]</c:if>
-    </c:forEach><c:if test="${i.index < noUsers-1}">,</c:if>
-    <br>
-</c:forEach>
-
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
 
-    google.load('visualization', '1.1', { 'packages': ['bar'] });
+
+
+
+    google.load('visualization', 'current', { 'packages': ['bar'] });
     google.setOnLoadCallback(drawStuff);
 
     function drawStuff() {
+
         var data = new google.visualization.DataTable();
-        data.addColumn('string', '');
-        data.addColumn('number', 'Czas pracy');
+            data.addColumn('string', '');
+            data.addColumn('number', 'Czas pracy');
+            <c:forEach items="${activitiesDto.assignedTasks}" var="task">
+                data.addColumn('number', '${task.name}');
+                data.addColumn('number', '${task.name}');
+            </c:forEach>
 
-        <c:forEach items="${activitiesDto.activities}" var="entry">
-        data.addColumn('number', '${entry.key}');
-        data.addColumn('number', '${entry.key}');
-        </c:forEach>
-
-
-        // data.addColumn('number', 'Inactive - model');
-        // data.addColumn('number', 'Inactive');
-        // data.addColumn('number', '123 - model');
-        // data.addColumn('number', '123');
 
         data.addRows([
-
-            <c:set var = "noUsers" value = "${fn:length(activitiesDto.timesMatrix)}"/>
-            <c:forEach items="${activitiesDto.timesMatrix}" var="record" varStatus="i">
-            <c:set var = "length" value = "${fn:length(record)}"/>
-                ['${record[0]}'
-                <c:forEach items="${record}" var="value" begin="1" varStatus="step">
-                ,${value}</c:forEach>],
+            <c:forEach items="${activitiesDto.timesMatrix}" var="record">
+                ['${record[0]}', <c:forEach items="${record}" var="value" begin="1"> ${value}, </c:forEach> ],
             </c:forEach>
-            ['Bazyli Kopytko', 60, , 28, 20, 20, , 48, 15, , 20, 11, , 15, 20, 20, 60, , 15, , 20, 11]
-        ]);
+        ])
 
-        // Set chart options
+
         var options = {
+            title: 'Wykres aktywności',
             isStacked: true,
             width: window.innerWidth - 200,
-            height: 300,
+            height: 500,
             chart: {},
+            legend: {position: 'none'},
             vAxis: {
                 viewWindow: {
                     min: 0,
                     max: 500
                 }
             },
+
             series: {
-                0: {targetAxisIndex: 0},
-                1: {targetAxisIndex: 1},
-                2: {targetAxisIndex: 2},
-                3: {targetAxisIndex: 1},
-                4: {targetAxisIndex: 2},
+                0: {targetAxisIndex: 0}, //working time
+
+        <c:set var="counter" value="1"></c:set>
+        <c:set var="axis" value="1"></c:set>
+
+        <c:forEach items="${activitiesDto.assignedTasks}" var="task">
+            ${counter}: {targetAxisIndex: ${axis}, color:'forestgreen'},
+            <c:set var="counter" value="${counter+1}"></c:set>
+            <c:set var="axis" value="${axis == 1 ? 2 : 1}"></c:set>
+        </c:forEach>
+
+        <c:forEach items="${activitiesDto.assignedTasks}" var="task">
+                ${counter}: {targetAxisIndex: ${axis}, color:'orangered'},
+                <c:set var="counter" value="${counter+1}"></c:set>
+                <c:set var="axis" value="${axis == 1 ? 2 : 1}"></c:set>
+        </c:forEach>
+
             },
+
             vAxes: {
-                0: {
-                    title:'Minutes',
-                    textStyle: {color: 'gray'},
-                    titleTextStyle: {color: 'gray'},
-                },
-                1: {
-                    title:'',
-                    textStyle: {color: 'gray'},
-                    titleTextStyle: {color: 'gray'}
-                },
-                2: {
-                    title:'title',
-                    textStyle: {color: 'white'},
-                    titleTextStyle: {color: 'white'}
-                }
+                0: {title:'Minuty', textStyle: {color: 'gray'}, titleTextStyle: {color: 'gray'},},
+                1: {title:'', textStyle: {color: 'gray'}, titleTextStyle: {color: 'gray'}},
+                2: {title:'title', textStyle: {color: 'white'}, titleTextStyle: {color: 'white'} }
             }
 
         };
 
-        // Instantiate and draw our chart, passing in some options.
         var chart = new google.charts.Bar(document.getElementById('chart_div'));
         chart.draw(data, google.charts.Bar.convertOptions(options));
     };

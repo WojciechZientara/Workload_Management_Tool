@@ -175,16 +175,24 @@ div.activities {
 }
 
 #startWorkBtn {
-    border: 2px solid forestgreen;
+    border: 3px solid forestgreen;
 }
 
 #endWorkBtn {
     float: right;
-    border: 2px solid orangered;
+    border: 3px solid orangered;
+}
+
+#activateTask {
+    border: 2px solid forestgreen;
 }
 
 #stop {
-    border: 2px solid #999;
+    border: 2px solid orange;
+}
+
+#finish {
+    border: 2px solid orangered;
 }
 
 #activate {
@@ -194,3 +202,4 @@ div.activities {
 .dropdown {
     width: 350px;
 }
+

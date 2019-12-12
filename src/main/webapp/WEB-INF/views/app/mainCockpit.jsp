@@ -24,20 +24,24 @@
         <div>
             <table>
                 <tr><td style="text-align: right">Aktywne zadanie: </td>
-                    <td><label style="width: 350px; display: inline-block">${presentActivity.name}</label> </td>
+                    <td>
+                        <label style="width: 350px; display: inline-block; padding-left: 5px; color:red;"> ${presentActivity.name} </label>
+                    </td>
                     <td><button class="mainBtn" id="stop" onclick="window.location.href = '${pageContext.request.contextPath}/app/main/activity/stop';">
-                        Stop</button></td>
+                        Przerwij</button></td>
+                    <td><button class="mainBtn" id="finish" onclick="window.location.href = '${pageContext.request.contextPath}/app/main/activity/finish';">
+                        Ukończ</button></td>
                 </tr>
 
                 <c:url var="actionUrl" value="/app/main/activate" />
                 <form:form method="post" modelAttribute="activity" action="${actionUrl}">
                     <tr><td style="text-align: right">Zadania: </td>
-                        <td><form:select cssClass="dropdown" path="task" items="${tasks}"
+                        <td><form:select cssClass="dropdown" path="task" items="${reservedTasks}"
                                          itemValue="id" itemLabel="name" /></td>
                         <td></td></tr>
                     <tr>
                         <td></td>
-                        <td style="text-align: right"> <input type="submit" value="Aktywuj" class="mainBtn"> </td>
+                        <td style="text-align: right"> <input type="submit" id="activateTask" value="Aktywuj" class="mainBtn"> </td>
                         <td></td></tr>
                 </form:form>
             </table>
@@ -68,17 +72,24 @@
                     <td>${task.type}</td>
                     <td>${task.estimatedDuration}</td>
                     <td>${task.description}</td>
-                    <td>${task.user.firstName} ${task.user.lastName}</td>
 
-                    <td>
-                        <a class="btn" href="${pageContext.request.contextPath}/app/main/assignTask/${task.id}">Rezerwuj</a>
-                    </td>
+                    <c:choose>
+                        <c:when test="${task.user == null}">
+                            <td style="text-align: center">
+                                <c:if test="${startTime != '' && endTime == null}">
+                                    <a class="btn" href="${pageContext.request.contextPath}/app/main/assignTask/${task.id}">Rezerwuj</a>
+                                </c:if>
+                            </td>
+                        </c:when>
+                        <c:otherwise>
+                            <td>${task.user.firstName} ${task.user.lastName}</td>
+                        </c:otherwise>
+                    </c:choose>
                 </tr>
             </c:forEach>
             </tbody>
         </table>
     </div>
-
 </div>
 
 <%@include file="/WEB-INF/assets/footer.jsp"%>

@@ -8,6 +8,7 @@ import org.springframework.format.annotation.NumberFormat;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -49,5 +50,9 @@ public class Task {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private boolean isCompleted = false;
+
+    private LocalDate dateCompleted;
 
 }

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -45,14 +46,18 @@ public class MainController {
     }
 
     @GetMapping("/app/main")
-    public String getMain(HttpServletRequest request, Model model) {
+    public String getMain(Model model,
+                          HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
         if ((boolean)session.getAttribute("admin")) {
-            return "app/mainDashboard";
+            request.getServletContext().getRequestDispatcher("/app/activities/all").forward(request, response);
+            return null;
         } else {
             User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
-            model.addAttribute("tasks", getDailyTaskList(user));
+            List<List<Task>> taskSet = getDailyTaskList(user);
+            model.addAttribute("tasks", taskSet.get(0));
+            model.addAttribute("reservedTasks", taskSet.get(1));
             try {
                 Activity workingHours = activityRepository.findWorkingHours(user).get(0);
                 model.addAttribute("startTime", workingHours.getStartTime());
@@ -74,21 +79,25 @@ public class MainController {
         HttpSession session = request.getSession();
         User user = userRepository.findOne((long)session.getAttribute("id"));
         Task task = taskRepository.findOne(taskId);
-        task.setUser(user);
-        taskRepository.save(task);
+        if (task.getUser() == null) {
+            task.setUser(user);
+            taskRepository.save(task);
+        }
         response.sendRedirect(request.getContextPath() + "/app/main");
         return null;
 
     }
 
-    private List<Task> getDailyTaskList(User user) {
+    private List<List<Task>> getDailyTaskList(User user) {
         List<Task> tasks = new ArrayList<>();
+        List<Task> reservedTasks = new ArrayList<>();
 
         for (Client client: user.getClients()) {
             client = clientRepository.findClientWithBauReports(client.getId());
 
             for (BauReport bauReport : client.getBauReportList()) {
-                if (taskRepository.findTaskByBauReport(bauReport) == null) {
+                if (taskRepository.findTaskByBauReport(bauReport) == null &&
+                    taskRepository.findTaskByBauReportCompletedToday(bauReport) == null) {
                     Task task = new Task();
                     task.setName(bauReport.getName());
                     task.setClient(client);
@@ -100,8 +109,9 @@ public class MainController {
                 }
             }
             tasks.addAll(taskRepository.findTasksByClient(client));
+            reservedTasks.addAll(taskRepository.findReservedTasksByClient(client, user));
         }
-        return tasks;
+        return Arrays.asList(tasks, reservedTasks);
     }
 
     @GetMapping("/app/main/newAdHoc")
