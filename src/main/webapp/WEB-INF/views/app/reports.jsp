@@ -17,9 +17,7 @@
                         <th>Id</th>
                         <th>Nazwa</th>
                         <th>Klient</th>
-                        <th>Suma czasu produkcji (s)</th>
-                        <th>Dostarczone raporty</th>
-                        <th>Średni czas produkcji (s)</th>
+                        <th>Średni czas<br>produkcji (m)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,9 +26,7 @@
                             <td>${report.id}</td>
                             <td>${report.name}</td>
                             <td>${report.client.name}</td>
-                            <td>${report.sumOfDuration}</td>
-                            <td>${report.numberOfRuns}</td>
-                            <td>${report.averageDuration}</td>
+                            <td>${Math.round(report.averageDuration / 60)}</td>
                             <td>
                                 <a class="btn" href="${pageContext.request.contextPath}/app/reports/edit/${report.id}">Edytuj</a>
                                 <a class="btn" href="${pageContext.request.contextPath}/app/reports/delete/${report.id}" onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>

@@ -13,11 +13,11 @@ import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    @Query("SELECT t FROM Task t WHERE t.isCompleted = false AND t.user <> null")
-    List<Task> findAllAssignedTasks();
+    @Query("SELECT t FROM Task t WHERE t.isCompleted = false AND t.user <> null AND t.dateAssigned = CURRENT_DATE ")
+    List<Task> findAllActiveAssignedTasks();
 
-    @Query("SELECT t FROM Task t WHERE t.isCompleted = false ")
-    List<Task> findAllNotCompletedTasks();
+    @Query("SELECT t FROM Task t WHERE t.dateCompleted = CURRENT_DATE")
+    List<Task> findAllTasksCompletedToday();
 
     @Query("SELECT t FROM Task t WHERE t.bauArchetype = ?1 AND t.isCompleted = false ")
     Task findTaskByBauReport(BauReport bauReport);

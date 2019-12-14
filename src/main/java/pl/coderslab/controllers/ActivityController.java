@@ -80,7 +80,7 @@ public class ActivityController {
 
     @GetMapping("/app/main/activity/workEnd")
     public String getWorkEnd(Model model,
-                               HttpServletRequest request, HttpServletResponse response ) throws Exception {
+                             HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
 
@@ -109,7 +109,7 @@ public class ActivityController {
 
     @GetMapping("/app/main/activity/stop")
     public String getStop(Model model,
-                             HttpServletRequest request, HttpServletResponse response ) throws Exception {
+                          HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
 
@@ -117,7 +117,7 @@ public class ActivityController {
             Activity workingHours = activityRepository.findWorkingHours(user).get(0);
             if (workingHours.getEndTime() == null) {
                 Activity activity = activityRepository.findActiveOne(user);
-                if (activity != null && !activity.getName().equals("Inactive")) {
+                if (activity != null && !activity.getName().endsWith("Inactive")) {
                     activity.setEndTime(LocalTime.now());
                     activity.setDuration((Duration.between(activity.getStartTime(), activity.getEndTime())).getSeconds());
                     activityRepository.save(activity);
@@ -139,7 +139,7 @@ public class ActivityController {
 
     @GetMapping("/app/main/activity/finish")
     public String getFinish(Model model,
-                          HttpServletRequest request, HttpServletResponse response ) throws Exception {
+                            HttpServletRequest request, HttpServletResponse response ) throws Exception {
 
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
@@ -148,7 +148,7 @@ public class ActivityController {
             Activity workingHours = activityRepository.findWorkingHours(user).get(0);
             if (workingHours.getEndTime() == null) {
                 Activity activity = activityRepository.findActiveOne(user);
-                if (activity != null && !activity.getName().equals("Inactive")) {
+                if (activity != null && !activity.getName().endsWith("Inactive")) {
                     activity.setEndTime(LocalTime.now());
                     activity.setDuration((Duration.between(activity.getStartTime(), activity.getEndTime())).getSeconds());
                     activityRepository.save(activity);
@@ -184,7 +184,7 @@ public class ActivityController {
 
     @PostMapping("/app/main/activate")
     public String postActivateTask(@Valid Activity activity, BindingResult result, Model model,
-                               HttpServletRequest request, HttpServletResponse response ) throws Exception {
+                                   HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
 
@@ -219,102 +219,157 @@ public class ActivityController {
     @GetMapping("/app/activities/all")
     public String getAllActivities(HttpServletRequest request, Model model) {
 
-        List<User> users = taskRepository.findAllAssignedTasksUsers();
+//        List<User> users = taskRepository.findAllAssignedTasksUsers();
+        List<User> users = activityRepository.findAllActivitiesUsers();
 
         ActivitiesDto activitiesDto = new ActivitiesDto();
+        List<Object[]> objActivities = new ArrayList<>();
 
-        for (int i = 0; i < users.size(); i++) {
-            Task inactive = new Task();
-            inactive.setName("Inactive" + users.get(i).getId());
-            inactive.setEstimatedDuration(45L);
-            inactive.setUser(users.get(i));
-            activitiesDto.getAssignedTasks().add(inactive);
-        }
+        if (users.size() > 0) {
 
-        activitiesDto.getAssignedTasks().addAll(taskRepository.findAllAssignedTasks());
-        activitiesDto.setTimesMatrix(new String[ users.size() ][ activitiesDto.getAssignedTasks().size() * 2 + 2 ]);
+            for (int i = 0; i < users.size(); i++) {
+                Task inactive = new Task();
+                inactive.setName("Inactive" + users.get(i).getId());
+                inactive.setEstimatedDuration(2700);
+                inactive.setUser(users.get(i));
+                activitiesDto.getAssignedTasks().add(inactive);
+            }
 
-        for (int i = 0; i < users.size(); i++) {
-            for (int j = 0; j < activitiesDto.getTimesMatrix()[i].length ; j++) {
+            activitiesDto.getAssignedTasks().addAll(taskRepository.findAllActiveAssignedTasks());
+            activitiesDto.getAssignedTasks().addAll(taskRepository.findAllTasksCompletedToday());
+            activitiesDto.setTimesMatrix(new String[ users.size() ][ activitiesDto.getAssignedTasks().size() * 2 + 2 ]);
+
+            for (int i = 0; i < users.size(); i++) {
+                for (int j = 0; j < activitiesDto.getTimesMatrix()[i].length ; j++) {
                     activitiesDto.getTimesMatrix()[i][j] = "0";
-            }
-        }
-
-        for (int i = 0; i < users.size(); i++) {
-            activitiesDto.getUsers().put(users.get(i).getId(), i);
-            activitiesDto.getTimesMatrix()[i][0] = users.get(i).getFirstName() + " " + users.get(i).getLastName();
-            try {
-                Activity workingHours = activityRepository.findWorkingHours(users.get(i)).get(0);
-                activitiesDto.getTimesMatrix()[i][1] = String.valueOf(Duration.between(workingHours.getStartTime(), LocalTime.now()).getSeconds() / 60);
-            } catch (Exception e) {
-                activitiesDto.getTimesMatrix()[i][1] = "0";
-            }
-
-        }
-        for (int i = 0; i < activitiesDto.getAssignedTasks().size(); i++) {
-            activitiesDto.getActivities().put(activitiesDto.getAssignedTasks().get(i).getName(), i);
-        }
-
-
-        for (Task task : activitiesDto.getAssignedTasks()) {
-            User user = task.getUser();
-            String activityName = task.getName();
-            Integer row = activitiesDto.getUsers().get(user.getId());
-            Integer col = activitiesDto.getActivities().get(activityName);
-            activitiesDto.getTimesMatrix()[row][col * 2 + 3] = String.valueOf(task.getEstimatedDuration() / 60);
-            if (task.getName().startsWith("Inactive")) {
-                task.setName("Bezczynność");
-            }
-        }
-
-
-        List<Object[]> objActivities = activityRepository.findAllActivities();
-        List<Activity> currentlyActive = activityRepository.findAllActive();
-        for (Activity activity : currentlyActive) {
-            activity.setDuration((Duration.between(activity.getStartTime(), LocalTime.now())).getSeconds());
-            for (Object[] object : objActivities) {
-                User objUser = (User) object[0];
-                String objActivityName = (String) object[1];
-                Long objDuration = (Long) object[2];
-                if (activity.getUser().getId() == objUser.getId() && activity.getName().equals(objActivityName)) {
-                    object[2] = objDuration + activity.getDuration();
                 }
             }
+
+            for (int i = 0; i < users.size(); i++) {
+                activitiesDto.getUsers().put(users.get(i).getId(), i);
+                activitiesDto.getTimesMatrix()[i][0] = users.get(i).getFirstName() + " " + users.get(i).getLastName();
+                try {
+                    Activity workingHours = activityRepository.findWorkingHours(users.get(i)).get(0);
+                    activitiesDto.getTimesMatrix()[i][1] = String.valueOf(Duration.between(workingHours.getStartTime(), LocalTime.now()).getSeconds() / 60);
+                } catch (Exception e) {
+                    //working hours = 0;
+                }
+
+            }
+            for (int i = 0; i < activitiesDto.getAssignedTasks().size(); i++) {
+                activitiesDto.getActivities().put(activitiesDto.getAssignedTasks().get(i).getName(), i);
+            }
+
+
+            for (Task task : activitiesDto.getAssignedTasks()) {
+                User user = task.getUser();
+                String activityName = task.getName();
+                Integer row = activitiesDto.getUsers().get(user.getId());
+                Integer col = activitiesDto.getActivities().get(activityName);
+                activitiesDto.getTimesMatrix()[row][col * 2 + 3] = String.valueOf(task.getEstimatedDuration() / 60);
+                if (task.getName().contains("Inactive")) {
+                    task.setName("Bezczynność");
+                }
+            }
+
+
+            objActivities = activityRepository.findAllActivities();
+            List<Activity> currentlyActive = activityRepository.findAllActive();
+            for (Activity activity : currentlyActive) {
+                activity.setDuration((Duration.between(activity.getStartTime(), LocalTime.now())).getSeconds());
+                for (Object[] object : objActivities) {
+                    User objUser = (User) object[0];
+                    String objActivityName = (String) object[1];
+                    Long objDuration = (Long) object[2];
+                    if (activity.getUser().getId() == objUser.getId() && activity.getName().equals(objActivityName)) {
+                        object[2] = objDuration + activity.getDuration();
+                        object[1] = "[Active]" + (String) object[1];
+                    }
+                }
+
+            }
+
+
+
+            for (Object[] object : objActivities) {
+                User user = (User) object[0];
+                String activityName = (String) object[1];
+                String lookupName = activityName;
+                if (activityName.startsWith("[Active]")) {
+                    lookupName = activityName.substring(8);
+                }
+                Integer row = activitiesDto.getUsers().get(user.getId());
+                Integer col = 0;
+                if (activityName.endsWith("Inactive")) {
+                    col = activitiesDto.getActivities().get(lookupName + user.getId());
+                } else {
+                    col = activitiesDto.getActivities().get(lookupName);
+                }
+                activitiesDto.getTimesMatrix()[row][col * 2 + 2] = String.valueOf(Math.floor((long) object[2] / 60));
+
+                Task task = activitiesDto.getAssignedTasks().get(col);
+                task.setDuration(task.getDuration() + (long) object[2]);
+                if (activityName.startsWith("[Active]")) {
+                    if (activityName.endsWith("Inactive")) {
+                        Task newtask = new Task();
+                        newtask.setDescription("Active");
+                        object[3] = newtask;
+                    }
+                    task.setDescription("Active");
+                    object[1] = lookupName;
+                    Task objectTask = (Task) object[3];
+                    objectTask.setDescription("Active");
+                    object[3] = objectTask;
+                }
+
+                object[2] = (long) object[2] / 60;
+                if (activityName.endsWith("Inactive")) {
+                    Task estDuration = (Task) object[3];
+                    if (estDuration == null) {
+                        estDuration = new Task();
+                    }
+                    estDuration.setEstimatedDuration(45);
+                    object[3] = estDuration;
+                } else {
+                    Task estDuration = (Task) object[3];
+                    estDuration.setEstimatedDuration(estDuration.getEstimatedDuration() / 60);
+                    object[3] = estDuration;
+                }
+
+            }
+
+//        int counter = 0;
+//        for (int i = 0; i < activitiesDto.getAssignedTasks().size(); i++) {
+//            if (counter == activitiesDto.getUsers().size()) break;
+//            Task task = activitiesDto.getAssignedTasks().get(i);
+//            Integer userPosition = activitiesDto.getUsers().get(task.getUser().getId());
+//            String taskRealDur = (String) activitiesDto.getTimesMatrix()[userPosition][i * 2 +2];
+//            String taskEstDur = (String) activitiesDto.getTimesMatrix()[userPosition][i * 2 +3];
+//            if (task.getDescription() != null && task.getDescription().equals("Active")) {
+//                for (int k = 0; k < activitiesDto.getUsers().size(); k ++) {
+//                    for (int j = i; j < activitiesDto.getAssignedTasks().size() - 1; j++ ) {
+//                        activitiesDto.getAssignedTasks().set(j, activitiesDto.getAssignedTasks().get(j + 1));
+//                        activitiesDto.getTimesMatrix()[k][i * 2 +2] = activitiesDto.getTimesMatrix()[k][i * 2 + 4];
+//                        activitiesDto.getTimesMatrix()[k][i * 2 +3] = activitiesDto.getTimesMatrix()[k][i * 2 + 5];
+//                    }
+//                    activitiesDto.getAssignedTasks().set(activitiesDto.getAssignedTasks().size() -1, task);
+//                    activitiesDto.getTimesMatrix()[k][activitiesDto.getTimesMatrix()[k].length - 2] = taskRealDur;
+//                    activitiesDto.getTimesMatrix()[k][activitiesDto.getTimesMatrix()[k].length - 1] = taskEstDur;
+//                }
+//                i--;
+//                counter++;
+//            }
+//        }
+
         }
 
 
-
-        for (Object[] object : objActivities) {
-            User user = (User) object[0];
-            String activityName = (String) object[1];
-            Integer row = activitiesDto.getUsers().get(user.getId());
-            Integer col = 0;
-            if (activityName.equals("Inactive")) {
-                col = activitiesDto.getActivities().get(activityName + user.getId());
-            } else {
-                col = activitiesDto.getActivities().get(activityName);
-            }
-            activitiesDto.getTimesMatrix()[row][col * 2 + 2] = String.valueOf(Math.floor((long) object[2] / 60));
-
-            Long duration = activitiesDto.getAssignedTasks().get(col).getDuration();
-            activitiesDto.getAssignedTasks().get(col).setDuration(duration + (long) object[2]);
-
-            object[2] = (long) object[2] / 60;
-            if (activityName.equals("Inactive")) {
-                Task estDuration = new Task();
-                estDuration.setEstimatedDuration(45);
-                object[3] = estDuration;
-            } else {
-                Task estDuration = (Task) object[3];
-                estDuration.setEstimatedDuration(estDuration.getEstimatedDuration() / 60);
-                object[3] = estDuration;
-            }
-
-        }
 
         model.addAttribute("activities", objActivities);
         model.addAttribute("activitiesDto", activitiesDto);
         return "app/mainDashboard";
     }
+
+    // ZMIANY
 
 }

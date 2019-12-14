@@ -81,6 +81,7 @@ public class MainController {
         Task task = taskRepository.findOne(taskId);
         if (task.getUser() == null) {
             task.setUser(user);
+            task.setDateAssigned(LocalDate.now());
             taskRepository.save(task);
         }
         response.sendRedirect(request.getContextPath() + "/app/main");

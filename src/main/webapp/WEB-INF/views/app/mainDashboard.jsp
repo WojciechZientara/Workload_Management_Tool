@@ -24,7 +24,9 @@
         </thead>
         <tbody>
         <c:forEach items="${activities}" var="activity">
-            <tr>
+            <tr
+                    <c:if test="${activity[3].description == 'Active'}">style="text-shadow: -1px 0 gold, 0 1px gold,1px 0 gold, 0 -1px gold "</c:if>
+            >
                 <td>${activity[0].firstName} ${activity[0].lastName}</td>
                 <td>${activity[1]}</td>
                 <td>${activity[2]}</td>
@@ -84,13 +86,23 @@
         <c:set var="axis" value="1"></c:set>
 
         <c:forEach items="${activitiesDto.assignedTasks}" var="task">
+        <c:choose>
+        <c:when test="${task.description == 'Active'}">
+        ${counter}: {targetAxisIndex: ${axis}, color:'yellow'},
+        </c:when>
+        <c:when test="${task.completed == true || task.name == 'Bezczynność'}">
         ${counter}: {targetAxisIndex: ${axis}, color:'forestgreen'},
+        </c:when>
+        <c:otherwise>
+        ${counter}: {targetAxisIndex: ${axis}, color:'#D80000'},
+        </c:otherwise>
+        </c:choose>
         <c:set var="counter" value="${counter+1}"></c:set>
         <c:set var="axis" value="${axis == 1 ? 2 : 1}"></c:set>
         </c:forEach>
 
         <c:forEach items="${activitiesDto.assignedTasks}" var="task">
-        ${counter}: {targetAxisIndex: ${axis}, color:'orangered'},
+        ${counter}: {targetAxisIndex: ${axis}, color:'forestgreen'},
         <c:set var="counter" value="${counter+1}"></c:set>
         <c:set var="axis" value="${axis == 1 ? 2 : 1}"></c:set>
         </c:forEach>

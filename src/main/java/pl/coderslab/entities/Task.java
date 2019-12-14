@@ -53,6 +53,8 @@ public class Task {
 
     private boolean isCompleted = false;
 
+    private LocalDate dateAssigned;
+
     private LocalDate dateCompleted;
 
 }
