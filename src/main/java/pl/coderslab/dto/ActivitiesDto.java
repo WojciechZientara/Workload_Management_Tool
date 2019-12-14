@@ -20,5 +20,6 @@ public class ActivitiesDto {
     private Map<String, Integer> activities = new HashMap<>();
     private Map<Long, Integer> users = new HashMap<>();
     private Object[][] timesMatrix;
+    private List<Object[]> objActivities;
 
 }

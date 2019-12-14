@@ -6,7 +6,7 @@
     <ul>
         <c:choose>
             <c:when test="${sessionScope.admin == 'false'}" >
-                <li><a href="${pageContext.request.contextPath}/app/main">Kokpit</a></li>
+                <li><a href="${pageContext.request.contextPath}/app/main">Panel Użytkownika</a></li>
                 <li><a href="${pageContext.request.contextPath}/app/activities">Moja Aktywność</a></li>
             </c:when>
             <c:otherwise>
