@@ -3,6 +3,7 @@
 
 
 <div id="menu" class="mainFrame">
+    <form action="<c:url value="/logout"/>" method="post">
     <ul>
         <c:choose>
             <c:when test="${sessionScope.admin == 'false'}" >
@@ -17,8 +18,16 @@
             </c:otherwise>
         </c:choose>
 
-        <li class="userProfile"> <a href="${pageContext.request.contextPath}/app/userProfile">
-            <span id="userLogo">&#x1f464;</span> ${sessionScope.userName}
-        </a></li>
+
+            <li class="userProfile">
+                <input id="logout" type="submit" value="Wyloguj">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            </li>
+            <li class="userProfile">
+                <a href="${pageContext.request.contextPath}/app/userProfile">
+                <span id="userLogo">&#x1f464;</span> ${email} ${sessionScope.userName}
+                </a>
+            </li>
     </ul>
+    </form>
 </div>

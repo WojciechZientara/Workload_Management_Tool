@@ -71,6 +71,8 @@ div.mainFrame {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    font-family: "DejaVu Serif";
+    font-size: 16px;
 }
 
 #menu li {
@@ -96,6 +98,20 @@ div.mainFrame {
 #userLogo {
     color:transparent;
     text-shadow: 0 0 0 orangered;"
+}
+
+#logout{
+    background: none;
+    border: none;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: "DejaVu Serif";
+    font-size: 16px;
+}
+
+#logout:hover{
+    color: red;
 }
 
 #main {
@@ -202,4 +218,7 @@ div.activities {
 .dropdown {
     width: 350px;
 }
+
+
+
 

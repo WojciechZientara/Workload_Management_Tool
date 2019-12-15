@@ -18,6 +18,7 @@
                     <tr><td>        </td><td><form:errors path="client" cssClass="error"/></td></tr>
                     <tr><td></td><td><input type="submit" value="Zapisz" class="submitBtn"></td></tr>
                 </table>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             </form:form>
         </span>
     </div>

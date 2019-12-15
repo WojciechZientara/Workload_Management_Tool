@@ -17,6 +17,7 @@
                                                        itemValue="id" itemLabel="lastName" multiple="true"/></td></tr>
                     <tr><td></td><td><input type="submit" value="Zapisz" class="submitBtn"></td></tr>
                 </table>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             </form:form>
         </span>
     </div>

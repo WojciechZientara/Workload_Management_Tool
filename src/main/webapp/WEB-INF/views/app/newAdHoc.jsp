@@ -16,6 +16,7 @@
                     <tr><td>Estymowany czas: </td><td><form:input path="estimatedDuration" /></td></tr>
                     <tr><td>        </td><td><form:errors path="estimatedDuration" cssClass="error"/></td></tr>
                     <tr><td></td><td><input type="submit" value="Zapisz" class="submitBtn"></td></tr>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 </table>
             </form:form>
         </span>

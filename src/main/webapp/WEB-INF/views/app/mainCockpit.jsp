@@ -43,6 +43,7 @@
                         <td></td>
                         <td style="text-align: right"> <input type="submit" id="activateTask" value="Aktywuj" class="mainBtn"> </td>
                         <td></td></tr>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 </form:form>
             </table>
         </div>
