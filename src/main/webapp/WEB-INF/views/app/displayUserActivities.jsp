@@ -31,6 +31,7 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${activity.duration == 0}"></c:when>
+                                    <c:when test="${fn:contains(activity.duration div 3600, 'E')}">00:00:00</c:when>
                                     <c:otherwise>
                                         <c:if test="${Hours < 10}">0</c:if>${Hours}:<c:if test="${Minutes < 10}">0</c:if>${Minutes}:<c:if test="${SecondsLeft < 10}">0</c:if>${SecondsLeft}
                                     </c:otherwise>
