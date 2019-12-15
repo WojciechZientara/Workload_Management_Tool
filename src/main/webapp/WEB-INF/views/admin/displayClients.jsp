@@ -7,7 +7,7 @@
 
     <div id="main" class="mainFrame">
         <br>
-        <button class="mainBtn" onclick="window.location.href = '${pageContext.request.contextPath}/app/clients/add';">
+        <button class="mainBtn" onclick="window.location.href = '${pageContext.request.contextPath}/admin/addClient';">
             Dodaj klienta</button>
         <br><br>
 
@@ -36,8 +36,8 @@
                                 </c:forEach>
                             </td>
                             <td>
-                                <a class="btn" href="${pageContext.request.contextPath}/app/clients/edit/${client.id}">Edytuj</a>
-                                <a class="btn" href="${pageContext.request.contextPath}/app/clients/delete/${client.id}" onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>
+                                <a class="btn" href="${pageContext.request.contextPath}/admin/editClient/${client.id}">Edytuj</a>
+                                <a class="btn" href="${pageContext.request.contextPath}/admin/deleteClient/${client.id}" onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>
                             </td>
                         </tr>
                     </c:forEach>

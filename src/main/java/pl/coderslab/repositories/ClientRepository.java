@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import pl.coderslab.entities.Client;
-import pl.coderslab.entities.User;
 
 import java.util.List;
 
@@ -24,8 +23,5 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Transactional
     @Query(value = "DELETE FROM clients_users WHERE clients_id = ?1", nativeQuery = true)
     void clearClientsUsersAssociations(long id);
-
-
-
 
 }

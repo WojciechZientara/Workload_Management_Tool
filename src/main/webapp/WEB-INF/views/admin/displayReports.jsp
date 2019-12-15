@@ -7,7 +7,7 @@
 
     <div id="main" class="mainFrame">
         <br>
-        <button class="mainBtn" onclick="window.location.href = '${pageContext.request.contextPath}/app/reports/add';">
+        <button class="mainBtn" onclick="window.location.href = '${pageContext.request.contextPath}/admin/addReport';">
             Dodaj raport</button>
         <br><br>
 
@@ -28,8 +28,8 @@
                             <td>${report.client.name}</td>
                             <td>${Math.round(report.averageDuration / 60)}</td>
                             <td>
-                                <a class="btn" href="${pageContext.request.contextPath}/app/reports/edit/${report.id}">Edytuj</a>
-                                <a class="btn" href="${pageContext.request.contextPath}/app/reports/delete/${report.id}" onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>
+                                <a class="btn" href="${pageContext.request.contextPath}/admin/editReport/${report.id}">Edytuj</a>
+                                <a class="btn" href="${pageContext.request.contextPath}/admin/deleteReport/${report.id}" onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>
                             </td>
                         </tr>
                     </c:forEach>

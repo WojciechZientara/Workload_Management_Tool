@@ -7,14 +7,14 @@
     <ul>
         <c:choose>
             <c:when test="${sessionScope.admin == 'false'}" >
-                <li><a href="${pageContext.request.contextPath}/app/main">Panel Użytkownika</a></li>
-                <li><a href="${pageContext.request.contextPath}/app/activities">Moja Aktywność</a></li>
+                <li><a href="${pageContext.request.contextPath}/app/userPanel">Panel Użytkownika</a></li>
+                <li><a href="${pageContext.request.contextPath}/app/userActivities">Moja Aktywność</a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="${pageContext.request.contextPath}/app/main">Dashboard</a></li>
-                <li><a href="${pageContext.request.contextPath}/app/users">Użytkownicy</a></li>
-                <li><a href="${pageContext.request.contextPath}/app/clients">Klienci</a></li>
-                <li><a href="${pageContext.request.contextPath}/app/reports">Raporty</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/dashboard">Dashboard</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/users">Użytkownicy</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/clients">Klienci</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/reports">Raporty</a></li>
             </c:otherwise>
         </c:choose>
 

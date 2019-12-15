@@ -1,35 +1,26 @@
-package pl.coderslab.controllers;
+package pl.coderslab.controllers.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import pl.coderslab.dto.ActivitiesDto;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import pl.coderslab.entities.*;
 import pl.coderslab.repositories.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Controller
-public class ActivityController {
+public class UserConsoleController {
 
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    BauReportRepository bauReportRepository;
 
     @Autowired
     TaskRepository taskRepository;
@@ -37,17 +28,10 @@ public class ActivityController {
     @Autowired
     ActivityRepository activityRepository;
 
-    @GetMapping("/app/activities")
-    public String getActivities(HttpServletRequest request, Model model) {
+    @Autowired
+    BauReportRepository bauReportRepository;
 
-        HttpSession session = request.getSession();
-        User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
-        List<Activity> activities = activityRepository.findActivitiesByUser(user);
-        model.addAttribute("activities", activities);
-        return "app/activities";
-    }
-
-    @GetMapping("/app/main/activity/workStart")
+    @GetMapping("/app/console/workStart")
     public String getWorkStart(Model model,
                                HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
@@ -71,11 +55,11 @@ public class ActivityController {
                 activityRepository.save(idle);
             }
         }
-        response.sendRedirect(request.getContextPath() + "/app/main");
+        response.sendRedirect(request.getContextPath() + "/app/userPanel");
         return null;
     }
 
-    @GetMapping("/app/main/activity/workEnd")
+    @GetMapping("/app/console/workEnd")
     public String getWorkEnd(Model model,
                              HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
@@ -100,11 +84,46 @@ public class ActivityController {
             //no start time
         }
 
-        response.sendRedirect(request.getContextPath() + "/app/main");
+        response.sendRedirect(request.getContextPath() + "/app/userPanel");
         return null;
     }
 
-    @GetMapping("/app/main/activity/stop")
+    @PostMapping("/app/console/activateTask")
+    public String postActivateTask(@Valid Activity activity, BindingResult result, Model model,
+                                   HttpServletRequest request, HttpServletResponse response ) throws Exception {
+        HttpSession session = request.getSession();
+        User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
+
+        try {
+
+            Activity workingHours = activityRepository.findWorkingHours(user).get(0);
+            Activity active = activityRepository.findActiveOne(user);
+
+            if (activity.getTask() == null || workingHours.getEndTime() != null ||
+                    active.getName().equals(activity.getTask().getName())) {
+                throw new Exception();
+            }
+
+            if (active != null) {
+                active.setEndTime(LocalTime.now());
+                active.setDuration((Duration.between(active.getStartTime(), active.getEndTime())).getSeconds());
+                activityRepository.save(active);
+            }
+            activity.setName(activity.getTask().getName());
+            activity.setUser(user);
+            activity.setDate(LocalDate.now());
+            activity.setStartTime(LocalTime.now());
+            activityRepository.save(activity);
+        } catch (Exception e) {
+            //no start time
+        }
+
+        response.sendRedirect(request.getContextPath() + "/app/userPanel");
+        return null;
+    }
+
+
+    @GetMapping("/app/console/stopTask")
     public String getStop(Model model,
                           HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
@@ -130,11 +149,11 @@ public class ActivityController {
             //no records yet
         }
 
-        response.sendRedirect(request.getContextPath() + "/app/main");
+        response.sendRedirect(request.getContextPath() + "/app/userPanel");
         return null;
     }
 
-    @GetMapping("/app/main/activity/finish")
+    @GetMapping("/app/console/finishTask")
     public String getFinish(Model model,
                             HttpServletRequest request, HttpServletResponse response ) throws Exception {
 
@@ -175,49 +194,7 @@ public class ActivityController {
             //no records yet
         }
 
-        response.sendRedirect(request.getContextPath() + "/app/main");
+        response.sendRedirect(request.getContextPath() + "/app/userPanel");
         return null;
     }
-
-    @PostMapping("/app/main/activate")
-    public String postActivateTask(@Valid Activity activity, BindingResult result, Model model,
-                                   HttpServletRequest request, HttpServletResponse response ) throws Exception {
-        HttpSession session = request.getSession();
-        User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
-
-        try {
-
-            Activity workingHours = activityRepository.findWorkingHours(user).get(0);
-            Activity active = activityRepository.findActiveOne(user);
-
-            if (activity.getTask() == null || workingHours.getEndTime() != null ||
-                    active.getName().equals(activity.getTask().getName())) {
-                throw new Exception();
-            }
-
-            if (active != null) {
-                active.setEndTime(LocalTime.now());
-                active.setDuration((Duration.between(active.getStartTime(), active.getEndTime())).getSeconds());
-                activityRepository.save(active);
-            }
-            activity.setName(activity.getTask().getName());
-            activity.setUser(user);
-            activity.setDate(LocalDate.now());
-            activity.setStartTime(LocalTime.now());
-            activityRepository.save(activity);
-        } catch (Exception e) {
-            //no start time
-        }
-
-        response.sendRedirect(request.getContextPath() + "/app/main");
-        return null;
-    }
-
-    @GetMapping("/app/activities/all")
-    public String getAllActivities(HttpServletRequest request, Model model) {
-        return "app/mainDashboard";
-    }
-
-    // ZMIANY
-
 }

@@ -1,42 +1,24 @@
-package pl.coderslab.controllers;
+package pl.coderslab.controllers.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import pl.coderslab.dto.ActivitiesDto;
 import pl.coderslab.entities.Activity;
-import pl.coderslab.entities.BauReport;
 import pl.coderslab.entities.Task;
 import pl.coderslab.entities.User;
 import pl.coderslab.repositories.ActivityRepository;
-import pl.coderslab.repositories.BauReportRepository;
 import pl.coderslab.repositories.TaskRepository;
-import pl.coderslab.repositories.UserRepository;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
 @Controller
 public class DashboardController {
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    BauReportRepository bauReportRepository;
 
     @Autowired
     TaskRepository taskRepository;
@@ -44,14 +26,16 @@ public class DashboardController {
     @Autowired
     ActivityRepository activityRepository;
 
+    @GetMapping("/admin/dashboard")
+    public String getAllActivities(HttpServletRequest request, Model model) {
+        return "admin/displayDashboard";
+    }
 
     @GetMapping("/app/activities/getData")
-    public ActivitiesDto getAllActivities(HttpServletRequest request, Model model) {
-//    public String getAllActivities(HttpServletRequest request, Model model) {
+    @ResponseBody
+    public ActivitiesDto getData(HttpServletRequest request, Model model) {
 
-//        List<User> users = taskRepository.findAllAssignedTasksUsers();
         List<User> users = activityRepository.findAllActivitiesUsers();
-
         ActivitiesDto activitiesDto = new ActivitiesDto();
         List<Object[]> objActivities = new ArrayList<>();
 
@@ -126,8 +110,6 @@ public class DashboardController {
 
             }
 
-
-
             for (Object[] object : objActivities) {
                 User user = (User) object[0];
                 String activityName = (String) object[1];
@@ -175,35 +157,10 @@ public class DashboardController {
 
             }
 
-//        int counter = 0;
-//        for (int i = 0; i < activitiesDto.getAssignedTasks().size(); i++) {
-//            if (counter == activitiesDto.getUsers().size()) break;
-//            Task task = activitiesDto.getAssignedTasks().get(i);
-//            Integer userPosition = activitiesDto.getUsers().get(task.getUser().getId());
-//            String taskRealDur = (String) activitiesDto.getTimesMatrix()[userPosition][i * 2 +2];
-//            String taskEstDur = (String) activitiesDto.getTimesMatrix()[userPosition][i * 2 +3];
-//            if (task.getDescription() != null && task.getDescription().equals("Active")) {
-//                for (int k = 0; k < activitiesDto.getUsers().size(); k ++) {
-//                    for (int j = i; j < activitiesDto.getAssignedTasks().size() - 1; j++ ) {
-//                        activitiesDto.getAssignedTasks().set(j, activitiesDto.getAssignedTasks().get(j + 1));
-//                        activitiesDto.getTimesMatrix()[k][i * 2 +2] = activitiesDto.getTimesMatrix()[k][i * 2 + 4];
-//                        activitiesDto.getTimesMatrix()[k][i * 2 +3] = activitiesDto.getTimesMatrix()[k][i * 2 + 5];
-//                    }
-//                    activitiesDto.getAssignedTasks().set(activitiesDto.getAssignedTasks().size() -1, task);
-//                    activitiesDto.getTimesMatrix()[k][activitiesDto.getTimesMatrix()[k].length - 2] = taskRealDur;
-//                    activitiesDto.getTimesMatrix()[k][activitiesDto.getTimesMatrix()[k].length - 1] = taskEstDur;
-//                }
-//                i--;
-//                counter++;
-//            }
-//        }
-
         }
 
-
-
-        model.addAttribute("activities", objActivities);
-        model.addAttribute("activitiesDto", activitiesDto);
+//        model.addAttribute("activities", objActivities);
+//        model.addAttribute("activitiesDto", activitiesDto);
 
         activitiesDto.setObjActivities(objActivities);
 
@@ -236,9 +193,6 @@ public class DashboardController {
             }
         }
         return activitiesDto;
-//        return "app/mainDashboard";
     }
-
-    // ZMIANY
 
 }

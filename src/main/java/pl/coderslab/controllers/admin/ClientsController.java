@@ -1,4 +1,4 @@
-package pl.coderslab.controllers;
+package pl.coderslab.controllers.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,10 +9,8 @@ import pl.coderslab.entities.Client;
 import pl.coderslab.entities.User;
 import pl.coderslab.repositories.ClientRepository;
 import pl.coderslab.repositories.UserRepository;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -35,73 +33,73 @@ public class ClientsController {
         return users;
     }
     
-    @GetMapping("/app/clients")
-    public String getClients(Model model) {
+    @GetMapping("/admin/clients")
+    public String getDisplayClients(Model model) {
         List<Client> clients = clientRepository.findAllWithUsers();
         for (Client client : clients) {
             client.setBauReportList(clientRepository.findClientWithBauReports(client.getId()).getBauReportList());
         }
         model.addAttribute("clients", clients);
-        return "app/clients";
+        return "admin/displayClients";
     }
 
-    @GetMapping("/app/clients/add")
+    @GetMapping("/admin/addClient")
     public String getAddClient(Model model) {
         model.addAttribute("client", new Client());
-        return "app/saveClient";
+        return "admin/saveClient";
     }
 
-    @PostMapping("/app/clients/add")
+    @PostMapping("/admin/addClient")
     public String postAddClient(@Valid Client client, BindingResult result, Model model,
                             HttpServletRequest request, HttpServletResponse response ) throws IOException {
 
         try{
             if (result.hasErrors()) {
-                return "app/saveClient";
+                return "admin/saveClient";
             } else {
                 clientRepository.save(client);
-                response.sendRedirect(request.getContextPath() + "/app/clients");
+                response.sendRedirect(request.getContextPath() + "/admin/clients");
             }
         } catch (Exception e) {
             model.addAttribute("clientExists", true);
-            return "app/saveClient";
+            return "admin/saveClient";
         }
         return null;
     }
 
-    @GetMapping("/app/clients/edit/{clientId}")
+    @GetMapping("/admin/editClient/{clientId}")
     public String getEditClient(@PathVariable long clientId, Model model) {
         Client client = clientRepository.findClientWithUsers(clientId);
         client.setBauReportList(clientRepository.findClientWithBauReports(client.getId()).getBauReportList());
         model.addAttribute("client", client);
         model.addAttribute("edit", true);
-        return "app/saveClient";
+        return "admin/saveClient";
     }
 
-    @PostMapping("/app/clients/edit/{clientId}")
-    public String postIndex(@PathVariable long clientId, @Valid Client client, BindingResult result, Model model,
+    @PostMapping("/admin/editClient/{clientId}")
+    public String postEditClient(@PathVariable long clientId, @Valid Client client, BindingResult result, Model model,
                             HttpServletRequest request, HttpServletResponse response ) throws IOException {
 
         try{
             if (result.hasErrors()) {
-                return "app/saveClient";
+                return "admin/saveClient";
             } else {
                 client.setId(clientId);
                 clientRepository.save(client);
-                response.sendRedirect(request.getContextPath() + "/app/clients");
+                response.sendRedirect(request.getContextPath() + "/admin/clients");
             }
         } catch (Exception e) {
-            return "app/saveClient";
+            return "admin/saveClient";
         }
         return null;
     }
 
-    @GetMapping("/app/clients/delete/{clientId}")
-    public void postIndex(@PathVariable long clientId,
+    @GetMapping("/admin/deleteClient/{clientId}")
+    public void getDeleteClient(@PathVariable long clientId,
                             HttpServletRequest request, HttpServletResponse response ) throws IOException {
         clientRepository.clearClientsUsersAssociations(clientId);
         clientRepository.delete(clientId);
-        response.sendRedirect(request.getContextPath() + "/app/clients");
+        response.sendRedirect(request.getContextPath() + "/admin/clients");
     }
 
 }

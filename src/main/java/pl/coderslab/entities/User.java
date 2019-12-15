@@ -3,8 +3,6 @@ package pl.coderslab.entities;
 import lombok.*;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
-import org.mindrot.jbcrypt.BCrypt;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,32 +25,24 @@ public class User {
     private String lastName;
 
     @NotBlank
-    private String password;
-
-    private boolean isAdmin;
-
-    private boolean isPasswordChanged;
-
-    @NotBlank
     @Email
     @Column(unique = true)
     private String email;
 
-    @ManyToMany(mappedBy = "users")
-    private List<Client> clients = new ArrayList<>();
+    @NotBlank
+    private String password;
 
-    private int dailyWorkingHours;
-
-    @OneToMany(mappedBy = "user")
-    private List<Activity> activities;
+    private boolean isPasswordChanged;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    public void setPassword(String password) {
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
-    }
+    @ManyToMany(mappedBy = "users")
+    private List<Client> clients = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Activity> activities;
 
 }

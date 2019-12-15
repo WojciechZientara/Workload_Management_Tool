@@ -1,5 +1,4 @@
 package pl.coderslab.services;
-
 import pl.coderslab.entities.User;
 
 public interface UserService {

@@ -10,7 +10,7 @@
             <tr><td>E-mail: </td><td>${user.email}</td></tr>
         </table>
         <br>
-        <a class="btn" href="${pageContext.request.contextPath}/app/user/newPass">Zmień hasło</a>
+        <a class="btn" href="${pageContext.request.contextPath}/app/changePassword">Zmień hasło</a>
     </div>
 <%@include file="/WEB-INF/assets/footer.jsp"%>
 

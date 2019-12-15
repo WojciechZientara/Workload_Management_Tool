@@ -5,6 +5,4 @@ import pl.coderslab.entities.BauReport;
 
 public interface BauReportRepository extends JpaRepository<BauReport, Long> {
 
-
-
 }

@@ -7,10 +7,18 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.coderslab.entities.Role;
 import pl.coderslab.entities.User;
 
-import java.util.List;
-
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
     Role findRoleByName(String name);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO user_role VALUES (?1, ?2)", nativeQuery = true)
+    void createUserRoleAssociation(long userId, long roleId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM user_role WHERE user_id = ?1", nativeQuery = true)
+    void clearUserRoleAssociations(long userId);
 
 }

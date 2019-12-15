@@ -13,10 +13,19 @@
     <span>
        <c:choose>
            <c:when test="${sessionScope.logged == 'true'}">
-               <a href="${pageContext.request.contextPath}/app/main">Workload Management Tool</a>
+
+               <c:choose>
+                   <c:when test="${sessionScope.admin == 'true'}">
+                       <a href="${pageContext.request.contextPath}/admin/dashboard">Workload Management Tool</a>
+                   </c:when>
+                   <c:otherwise>
+                       <a href="${pageContext.request.contextPath}/app/userPanel">Workload Management Tool</a>
+                   </c:otherwise>
+               </c:choose>
+
            </c:when>
            <c:otherwise>
-               <a href="${pageContext.request.contextPath}/">Workload Management Tool</a>
+               <a href="${pageContext.request.contextPath}/login">Workload Management Tool</a>
            </c:otherwise>
        </c:choose>
     </span>

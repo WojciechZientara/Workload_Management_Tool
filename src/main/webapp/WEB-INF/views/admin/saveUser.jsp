@@ -17,7 +17,8 @@
                     <tr><td>        </td><td><form:errors path="lastName" cssClass="error"/></td></tr>
                     <tr><td>E-mail: </td><td><form:input path="email" /></td></tr>
                     <tr><td>        </td><td><form:errors path="email" cssClass="error"/></td></tr>
-                    <tr><td>Admin: </td><td><form:checkbox path="admin" /></td></tr>
+                    <tr><td>Role: </td><td><form:select path="roles" items="${roles}"
+                                                           itemValue="id" itemLabel="name" multiple="true"/></td></tr>
                     <tr><td>Klienci: </td><td><form:select path="clients" items="${clients}"
                                                        itemValue="id" itemLabel="name" multiple="true"/></td></tr>
 

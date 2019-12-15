@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import pl.coderslab.entities.User;
-
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -17,9 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT u FROM User u LEFT JOIN FETCH u.clients WHERE u.id = ?1")
     User findOneWithClients(long id);
-
-    @Query(value = "SELECT u FROM User u LEFT JOIN FETCH u.activities WHERE u.id = ?1")
-    User findOneWithActivities(long id);
 
     @Modifying
     @Transactional

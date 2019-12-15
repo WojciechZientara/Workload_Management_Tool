@@ -1,4 +1,4 @@
-package pl.coderslab.controllers;
+package pl.coderslab.controllers.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,15 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Controller
-public class MainController {
+public class UserPanelController {
 
     @Autowired
     UserRepository userRepository;
@@ -35,9 +35,6 @@ public class MainController {
     TaskRepository taskRepository;
 
     @Autowired
-    BauReportRepository bauReportRepository;
-
-    @Autowired
     ActivityRepository activityRepository;
 
     @ModelAttribute("clients")
@@ -45,48 +42,26 @@ public class MainController {
         return clientRepository.findAll();
     }
 
-    @GetMapping("/app/main")
-    public String getMain(Model model,
+    @GetMapping("/app/userPanel")
+    public String getUserPanel(Model model,
                           HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
-        if ((boolean)session.getAttribute("admin")) {
-            request.getServletContext().getRequestDispatcher("/app/activities/all").forward(request, response);
-            return null;
-        } else {
-            User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
-            List<List<Task>> taskSet = getDailyTaskList(user);
-            model.addAttribute("tasks", taskSet.get(0));
-            model.addAttribute("reservedTasks", taskSet.get(1));
-            try {
-                Activity workingHours = activityRepository.findWorkingHours(user).get(0);
-                model.addAttribute("startTime", workingHours.getStartTime());
-                model.addAttribute("endTime", workingHours.getEndTime());
-            } catch (Exception e) {
-                model.addAttribute("startTime", "");
-                model.addAttribute("endTime", "");
-            }
-            model.addAttribute("activity", new Activity());
-            model.addAttribute("presentActivity", activityRepository.findActiveOne(user));
-            return "app/mainCockpit";
+        User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
+        List<List<Task>> taskSet = getDailyTaskList(user);
+        model.addAttribute("tasks", taskSet.get(0));
+        model.addAttribute("reservedTasks", taskSet.get(1));
+        try {
+            Activity workingHours = activityRepository.findWorkingHours(user).get(0);
+            model.addAttribute("startTime", workingHours.getStartTime());
+            model.addAttribute("endTime", workingHours.getEndTime());
+        } catch (Exception e) {
+            model.addAttribute("startTime", "");
+            model.addAttribute("endTime", "");
         }
-    }
-
-    @GetMapping("/app/main/assignTask/{taskId}")
-    public String getAssignTask(@PathVariable long taskId, Model model,
-                                HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        HttpSession session = request.getSession();
-        User user = userRepository.findOne((long)session.getAttribute("id"));
-        Task task = taskRepository.findOne(taskId);
-        if (task.getUser() == null) {
-            task.setUser(user);
-            task.setDateAssigned(LocalDate.now());
-            taskRepository.save(task);
-        }
-        response.sendRedirect(request.getContextPath() + "/app/main");
-        return null;
-
+        model.addAttribute("activity", new Activity());
+        model.addAttribute("presentActivity", activityRepository.findActiveOne(user));
+        return "app/displayUserPanel";
     }
 
     private List<List<Task>> getDailyTaskList(User user) {
@@ -98,7 +73,7 @@ public class MainController {
 
             for (BauReport bauReport : client.getBauReportList()) {
                 if (taskRepository.findTaskByBauReport(bauReport) == null &&
-                    taskRepository.findTaskByBauReportCompletedToday(bauReport) == null) {
+                        taskRepository.findTaskByBauReportCompletedToday(bauReport) == null) {
                     Task task = new Task();
                     task.setName(bauReport.getName());
                     task.setClient(client);
@@ -115,27 +90,45 @@ public class MainController {
         return Arrays.asList(tasks, reservedTasks);
     }
 
-    @GetMapping("/app/main/newAdHoc")
-    public String getNewAdHoc(HttpServletRequest request, Model model) {
-        model.addAttribute("task", new Task());
-        return "app/newAdHoc";
+    @GetMapping("/app/userPanel/assignTask/{taskId}")
+    public String getAssignTask(@PathVariable long taskId, Model model,
+                                HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        HttpSession session = request.getSession();
+        User user = userRepository.findOne((long)session.getAttribute("id"));
+        Task task = taskRepository.findOne(taskId);
+        if (task.getUser() == null) {
+            task.setUser(user);
+            task.setDateAssigned(LocalDate.now());
+            taskRepository.save(task);
+        }
+        response.sendRedirect(request.getContextPath() + "/app/userPanel");
+        return null;
+
     }
 
-    @PostMapping("/app/main/newAdHoc")
-    public String postNewAdHoc(@Valid Task task, BindingResult result, Model model,
+    @GetMapping("/app/userPanel/createAdHoc")
+    public String getCreateAdHoc(HttpServletRequest request, Model model) {
+        model.addAttribute("task", new Task());
+        return "app/createAdHoc";
+    }
+
+    @PostMapping("/app/userPanel/createAdHoc")
+    public String postCreateAdHoc(@Valid Task task, BindingResult result, Model model,
                                 HttpServletRequest request, HttpServletResponse response ) throws IOException {
 
         try{
             if (result.hasErrors()) {
-                return "app/newAdHoc";
+                return "app/createAdHoc";
             } else {
                 task.setType("Ad-hoc");
+                task.setEstimatedDuration(task.getEstimatedDuration() * 60);
                 task.setActivities(new ArrayList<>());
                 taskRepository.save(task);
-                response.sendRedirect(request.getContextPath() + "/app/main");
+                response.sendRedirect(request.getContextPath() + "/app/userPanel");
             }
         } catch (Exception e) {
-            return "app/newAdHoc";
+            return "app/createAdHoc";
         }
         return null;
     }

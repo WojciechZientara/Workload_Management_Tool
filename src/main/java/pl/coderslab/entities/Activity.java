@@ -1,13 +1,10 @@
 package pl.coderslab.entities;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
-
 import javax.persistence.*;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -39,7 +36,5 @@ public class Activity {
     @ManyToOne
     @JoinColumn(name = "task_id")
     private Task task;
-
-
 
 }

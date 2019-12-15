@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@include file="/WEB-INF/assets/header.jsp"%>
-<div id="main" class="mainFrame">
+<div id="main" class="mainFrame, landingFrame">
         <span class="landingPage">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             Fusce in convallis ipsum, et luctus massa. Nam id venenatis mi, vel volutpat nibh.

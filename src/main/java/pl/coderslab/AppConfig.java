@@ -14,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import pl.coderslab.converters.ClientConverter;
+import pl.coderslab.converters.RoleConverter;
 import pl.coderslab.converters.TaskConverter;
 import pl.coderslab.converters.UserConverter;
 
@@ -57,6 +58,7 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addConverter(getUserConverter());
         registry.addConverter(getClientConverter());
         registry.addConverter(getTaskConverter());
+        registry.addConverter(getRoleConverter());
     }
     
     @Bean
@@ -68,9 +70,15 @@ public class AppConfig implements WebMvcConfigurer {
     public ClientConverter getClientConverter() {
         return new ClientConverter();
     }
+
     @Bean
     public TaskConverter getTaskConverter() {
         return new TaskConverter();
+    }
+
+    @Bean
+    public RoleConverter getRoleConverter() {
+        return new RoleConverter();
     }
 
 
