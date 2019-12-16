@@ -45,4 +45,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Activity> activities;
 
+    private String fullName;
+
+    @Override
+    public String toString() {
+        return this.fullName;
+    }
 }

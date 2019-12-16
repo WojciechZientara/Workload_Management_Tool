@@ -40,11 +40,7 @@ public class UserController {
 
     @ModelAttribute("roles")
     public List<Role> getRoles() {
-        List<Role> roles = roleRepository.findAll();
-        for (Role role : roles) {
-            role.setName(role.getName().substring(5).toLowerCase());
-        }
-        return roles;
+        return roleRepository.findAll();
     }
 
     @GetMapping("/admin/users")
@@ -70,6 +66,7 @@ public class UserController {
             } else {
                 Set<Role> roles = user.getRoles();
                 user.setRoles(null);
+                user.setFullName(user.getFirstName() + " " + user.getLastName());
                 userService.saveUser(user);
                 for (Client client : user.getClients()) {
                     Client usersClient = clientRepository.findClientWithUsers(client.getId());
@@ -112,6 +109,7 @@ public class UserController {
                 userToUpdate.setId(userId);
                 userToUpdate.setFirstName(user.getFirstName());
                 userToUpdate.setLastName(user.getLastName());
+                userToUpdate.setFullName(user.getFirstName() + " " + user.getLastName());
                 userToUpdate.setEmail(user.getEmail());
                 userToUpdate.setClients(user.getClients());
                 userRepository.save(userToUpdate);

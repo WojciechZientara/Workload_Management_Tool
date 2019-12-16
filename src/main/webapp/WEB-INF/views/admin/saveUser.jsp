@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@include file="/WEB-INF/assets/header.jsp"%>
+<%@include file="/WEB-INF/assets/menu.jsp"%>
+
     <div id="main" class="mainFrame">
             <span id="login" class="landingPage">
             Dane użytkownika:<br><br>

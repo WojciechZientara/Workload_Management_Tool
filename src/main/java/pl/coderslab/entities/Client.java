@@ -27,4 +27,8 @@ public class Client {
     @OneToMany(mappedBy = "client", cascade = CascadeType.REMOVE)
     private List<BauReport> bauReportList;
 
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }

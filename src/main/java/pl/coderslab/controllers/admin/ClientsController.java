@@ -26,11 +26,7 @@ public class ClientsController {
 
     @ModelAttribute("users")
     public List<User> getUsers() {
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
-            user.setLastName(user.getFirstName() + " " + user.getLastName());
-        }
-        return users;
+        return userRepository.findAll();
     }
     
     @GetMapping("/admin/clients")
