@@ -29,4 +29,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM Task t WHERE t.client = ?1 AND t.user = ?2 AND t.isCompleted = false ")
     List<Task> findReservedTasksByClient(Client client, User user);
 
+    @Query("SELECT t FROM Task t WHERE t.isCompleted = false AND t.dateAssigned < CURRENT_DATE")
+    List<Task> findAllUncompletedAssignedBeforeToday();
+
 }

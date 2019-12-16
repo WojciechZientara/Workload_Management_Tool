@@ -65,6 +65,13 @@ public class UserPanelController {
     }
 
     private List<List<Task>> getDailyTaskList(User user) {
+
+        List<Task> unclompletedTasks = taskRepository.findAllUncompletedAssignedBeforeToday();
+        for (Task task : unclompletedTasks) {
+            task.setUser(null);
+            taskRepository.save(task);
+        }
+
         List<Task> tasks = new ArrayList<>();
         List<Task> reservedTasks = new ArrayList<>();
 
