@@ -2,7 +2,6 @@ package pl.coderslab.controllers.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,56 +31,40 @@ public class UserConsoleController {
     BauReportRepository bauReportRepository;
 
     @GetMapping("/app/console/workStart")
-    public String getWorkStart(Model model,
-                               HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public String getWorkStart(HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
-        Activity workingHours = new Activity();
-        try {
-            workingHours = activityRepository.findWorkingHours(user).get(0);
-        } catch (Exception e) {
-            if (workingHours.getEndTime() == null) {
-                workingHours.setDate(LocalDate.now());
-                workingHours.setStartTime(LocalTime.now());
-                workingHours.setUser(user);
-                workingHours.setName("Working Hours");
-                activityRepository.save(workingHours);
-
-                Activity idle = new Activity();
-                idle.setDate(LocalDate.now());
-                idle.setStartTime(LocalTime.now());
-                idle.setUser(user);
-                idle.setName("Inactive");
-                activityRepository.save(idle);
-            }
+        if (activityRepository.findWorkingHours(user) == null) {
+            Activity workingHours = new Activity();
+            workingHours.setDate(LocalDate.now());
+            workingHours.setStartTime(LocalTime.now());
+            workingHours.setUser(user);
+            workingHours.setName("Working Hours");
+            activityRepository.save(workingHours);
+            setInactive(user);
         }
         response.sendRedirect(request.getContextPath() + "/app/userPanel");
         return null;
     }
 
     @GetMapping("/app/console/workEnd")
-    public String getWorkEnd(Model model,
-                             HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public String getWorkEnd(HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
 
-        try {
-            Activity workingHours = activityRepository.findWorkingHours(user).get(0);
-            if (workingHours.getStartTime() == null || workingHours.getEndTime() != null) {
-                throw new Exception();
-            }
+        Activity workingHours = activityRepository.findWorkingHours(user);
+        if (workingHours != null && workingHours.getEndTime() == null) {
             workingHours.setEndTime(LocalTime.now());
             workingHours.setDuration((Duration.between(workingHours.getStartTime(), workingHours.getEndTime())).getSeconds());
             activityRepository.save(workingHours);
+        }
 
-            Activity activity = activityRepository.findActiveOne(user);
-            if (activity != null) {
-                activity.setEndTime(LocalTime.now());
-                activity.setDuration((Duration.between(activity.getStartTime(), activity.getEndTime())).getSeconds());
-                activityRepository.save(activity);
-            }
-        } catch (Exception e) {
-            //no start time
+        //close active task
+        Activity activity = activityRepository.findActiveOne(user);
+        if (activity != null) {
+            activity.setEndTime(LocalTime.now());
+            activity.setDuration((Duration.between(activity.getStartTime(), activity.getEndTime())).getSeconds());
+            activityRepository.save(activity);
         }
 
         response.sendRedirect(request.getContextPath() + "/app/userPanel");
@@ -89,87 +72,56 @@ public class UserConsoleController {
     }
 
     @PostMapping("/app/console/activateTask")
-    public String postActivateTask(@Valid Activity activity, BindingResult result, Model model,
+    public String postActivateTask(@Valid Activity activity, BindingResult result,
                                    HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
 
-        try {
+        Activity workingHours = activityRepository.findWorkingHours(user);
+        Activity activeOne = activityRepository.findActiveOne(user);
 
-            Activity workingHours = activityRepository.findWorkingHours(user).get(0);
-            Activity active = activityRepository.findActiveOne(user);
+        if (workingHours != null && workingHours.getEndTime() == null && /* user is working */
+            activity.getTask() != null && /* selected activity is not 'Inactive' */
+            !activeOne.getName().equals(activity.getTask().getName())) { /* selected activity is not active task */
 
-            if (activity.getTask() == null || workingHours.getEndTime() != null ||
-                    active.getName().equals(activity.getTask().getName())) {
-                throw new Exception();
-            }
-
-            if (active != null) {
-                active.setEndTime(LocalTime.now());
-                active.setDuration((Duration.between(active.getStartTime(), active.getEndTime())).getSeconds());
-                activityRepository.save(active);
+            if (activeOne != null) {
+                activeOne.setEndTime(LocalTime.now());
+                activeOne.setDuration((Duration.between(activeOne.getStartTime(), activeOne.getEndTime())).getSeconds());
+                activityRepository.save(activeOne);
             }
             activity.setName(activity.getTask().getName());
             activity.setUser(user);
             activity.setDate(LocalDate.now());
             activity.setStartTime(LocalTime.now());
             activityRepository.save(activity);
-        } catch (Exception e) {
-            //no start time
         }
-
         response.sendRedirect(request.getContextPath() + "/app/userPanel");
         return null;
     }
 
 
     @GetMapping("/app/console/stopTask")
-    public String getStop(Model model,
-                          HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public String getStop(HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
 
-        try {
-            Activity workingHours = activityRepository.findWorkingHours(user).get(0);
-            if (workingHours.getEndTime() == null) {
-                Activity activity = activityRepository.findActiveOne(user);
-                if (activity != null && !activity.getName().endsWith("Inactive")) {
-                    activity.setEndTime(LocalTime.now());
-                    activity.setDuration((Duration.between(activity.getStartTime(), activity.getEndTime())).getSeconds());
-                    activityRepository.save(activity);
-                    Activity idle = new Activity();
-                    idle.setDate(LocalDate.now());
-                    idle.setStartTime(LocalTime.now());
-                    idle.setUser(user);
-                    idle.setName("Inactive");
-                    activityRepository.save(idle);
-                }
-            }
-        } catch (Exception e) {
-            //no records yet
-        }
-
+        finishCurrentActivity(user);
         response.sendRedirect(request.getContextPath() + "/app/userPanel");
         return null;
     }
 
     @GetMapping("/app/console/finishTask")
-    public String getFinish(Model model,
-                            HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public String getFinish(HttpServletRequest request, HttpServletResponse response ) throws Exception {
 
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
 
-        try {
-            Activity workingHours = activityRepository.findWorkingHours(user).get(0);
-            if (workingHours.getEndTime() == null) {
-                Activity activity = activityRepository.findActiveOne(user);
-                if (activity != null && !activity.getName().endsWith("Inactive")) {
-                    activity.setEndTime(LocalTime.now());
-                    activity.setDuration((Duration.between(activity.getStartTime(), activity.getEndTime())).getSeconds());
-                    activityRepository.save(activity);
-
-                    Task task = activity.getTask();
+        Activity workingHours = activityRepository.findWorkingHours(user);
+        if (workingHours != null && workingHours.getEndTime() == null) {
+            Activity activity = finishCurrentActivity(user);
+            if (activity != null) {
+                Task task = activity.getTask();
+                if (task != null) {
                     task.setDuration(activityRepository.findSumOfActivitiesDurationByTask(task));
                     task.setDateCompleted(LocalDate.now());
                     task.setCompleted(true);
@@ -181,20 +133,34 @@ public class UserConsoleController {
                         bauReport.setAverageDuration(bauReport.getSumOfDuration() / bauReport.getNumberOfRuns());
                         bauReportRepository.save(bauReport);
                     }
-
-                    Activity idle = new Activity();
-                    idle.setDate(LocalDate.now());
-                    idle.setStartTime(LocalTime.now());
-                    idle.setUser(user);
-                    idle.setName("Inactive");
-                    activityRepository.save(idle);
                 }
             }
-        } catch (Exception e) {
-            //no records yet
         }
-
         response.sendRedirect(request.getContextPath() + "/app/userPanel");
         return null;
+    }
+
+    void setInactive(User user) {
+        Activity idle = new Activity();
+        idle.setDate(LocalDate.now());
+        idle.setStartTime(LocalTime.now());
+        idle.setUser(user);
+        idle.setName("Inactive");
+        activityRepository.save(idle);
+    }
+
+    Activity finishCurrentActivity(User user) {
+        Activity activity = null;
+        Activity workingHours = activityRepository.findWorkingHours(user);
+        if (workingHours != null && workingHours.getEndTime() == null) {
+            activity = activityRepository.findActiveOne(user);
+            if (activity != null && !activity.getName().endsWith("Inactive")) {
+                activity.setEndTime(LocalTime.now());
+                activity.setDuration((Duration.between(activity.getStartTime(), activity.getEndTime())).getSeconds());
+                activityRepository.save(activity);
+                setInactive(user);
+            }
+        }
+        return activity;
     }
 }

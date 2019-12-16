@@ -23,7 +23,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> findActivitiesByUser(User user);
 
     @Query("SELECT a FROM Activity a WHERE a.user = ?1 AND a.name = 'Working Hours' AND a.date = CURRENT_DATE")
-    List<Activity> findWorkingHours(User user);
+    Activity findWorkingHours(User user);
 
     @Query("SELECT a FROM Activity a WHERE a.user = ?1 AND a.endTime = null AND a.date = CURRENT_DATE AND a.name <> 'Working Hours'")
     Activity findActiveOne (User user);

@@ -15,9 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,13 +47,15 @@ public class UserPanelController {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
         List<List<Task>> taskSet = getDailyTaskList(user);
+
         model.addAttribute("tasks", taskSet.get(0));
         model.addAttribute("reservedTasks", taskSet.get(1));
-        try {
-            Activity workingHours = activityRepository.findWorkingHours(user).get(0);
+
+        Activity workingHours = activityRepository.findWorkingHours(user);
+        if (workingHours != null) {
             model.addAttribute("startTime", workingHours.getStartTime());
             model.addAttribute("endTime", workingHours.getEndTime());
-        } catch (Exception e) {
+        } else {
             model.addAttribute("startTime", "");
             model.addAttribute("endTime", "");
         }
@@ -66,6 +66,7 @@ public class UserPanelController {
 
     private List<List<Task>> getDailyTaskList(User user) {
 
+        //remove old reservations
         List<Task> unclompletedTasks = taskRepository.findAllUncompletedAssignedBeforeToday();
         for (Task task : unclompletedTasks) {
             task.setUser(null);
@@ -81,6 +82,7 @@ public class UserPanelController {
             for (BauReport bauReport : client.getBauReportList()) {
 
                 if (isReportDueToday(bauReport)) {
+                    //check if there is no previously created uncompleted task
                     if (taskRepository.findTaskByBauReport(bauReport) == null &&
                             taskRepository.findTaskByBauReportCompletedToday(bauReport) == null) {
                         Task task = new Task();
@@ -131,7 +133,7 @@ public class UserPanelController {
     }
 
     @GetMapping("/app/userPanel/assignTask/{taskId}")
-    public String getAssignTask(@PathVariable long taskId, Model model,
+    public String getAssignTask(@PathVariable long taskId,
                                 HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
@@ -148,13 +150,13 @@ public class UserPanelController {
     }
 
     @GetMapping("/app/userPanel/createAdHoc")
-    public String getCreateAdHoc(HttpServletRequest request, Model model) {
+    public String getCreateAdHoc(Model model) {
         model.addAttribute("task", new Task());
         return "app/createAdHoc";
     }
 
     @PostMapping("/app/userPanel/createAdHoc")
-    public String postCreateAdHoc(@Valid Task task, BindingResult result, Model model,
+    public String postCreateAdHoc(@Valid Task task, BindingResult result,
                                 HttpServletRequest request, HttpServletResponse response ) throws IOException {
 
         try{

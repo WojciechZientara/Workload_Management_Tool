@@ -62,8 +62,9 @@ public class DashboardController {
             for (int i = 0; i < users.size(); i++) {
                 activitiesDto.getUsers().put(users.get(i).getId(), i);
                 activitiesDto.getTimesMatrix()[i][0] = users.get(i).getFirstName() + " " + users.get(i).getLastName();
-                try {
-                    Activity workingHours = activityRepository.findWorkingHours(users.get(i)).get(0);
+
+                Activity workingHours = activityRepository.findWorkingHours(users.get(i));
+                if (workingHours != null) {
                     Activity activeOne = activityRepository.findActiveOne(users.get(i));
                     if (activeOne == null) {
                         List<Activity> userActivities = activityRepository.findActivitiesByUser(users.get(i));
@@ -72,8 +73,6 @@ public class DashboardController {
                     } else {
                         activitiesDto.getTimesMatrix()[i][1] = Duration.between(workingHours.getStartTime(), LocalTime.now()).getSeconds() / 60;
                     }
-                } catch (Exception e) {
-                    //working hours = 0;
                 }
 
             }
