@@ -25,7 +25,7 @@
             </li>
             <li class="userProfile">
                 <a href="${pageContext.request.contextPath}/app/userProfile">
-                <span id="userLogo">&#x1f464;</span> ${email} ${sessionScope.userName}
+                <span id="userLogo">&#x1f464;</span> ${sessionScope.userName}
                 </a>
             </li>
     </ul>

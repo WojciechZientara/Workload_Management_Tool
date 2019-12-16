@@ -149,6 +149,23 @@ public class UserPanelController {
 
     }
 
+    @GetMapping("/app/userPanel/unassignTask/{taskId}")
+    public String getUnassignTask(@PathVariable long taskId,
+                                HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        HttpSession session = request.getSession();
+        User user = userRepository.findOne((long)session.getAttribute("id"));
+        Task task = taskRepository.findOne(taskId);
+        if (task.getUser().getId() == user.getId()) {
+            task.setUser(null);
+            task.setDateAssigned(null);
+            taskRepository.save(task);
+        }
+        response.sendRedirect(request.getContextPath() + "/app/userPanel");
+        return null;
+
+    }
+
     @GetMapping("/app/userPanel/createAdHoc")
     public String getCreateAdHoc(Model model) {
         model.addAttribute("task", new Task());

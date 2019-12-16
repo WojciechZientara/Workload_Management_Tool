@@ -48,9 +48,17 @@
                             </td>
                         </c:when>
                         <c:otherwise>
-                            <td>${task.user.firstName} ${task.user.lastName}</td>
+                            <td>
+                                ${task.user.firstName} ${task.user.lastName}
+                                <c:if test="${task.user.id == sessionScope.id}">
+                                        <c:if test="${startTime != '' && endTime == null}">
+                                             <a class="btn" href="${pageContext.request.contextPath}/app/userPanel/unassignTask/${task.id}">Anuluj</a>
+                                        </c:if>
+                                </c:if>
+                            </td>
                         </c:otherwise>
                     </c:choose>
+
                 </tr>
             </c:forEach>
             </tbody>
