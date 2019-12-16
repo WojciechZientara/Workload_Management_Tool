@@ -23,6 +23,8 @@
                 <th>Typ</th>
                 <th>Czas (s)</th>
                 <th>Opis</th>
+                <th>Częstotliwość</th>
+                <th>Dzień</th>
                 <th>Użytkownik</th>
             </tr>
             </thead>
@@ -34,6 +36,8 @@
                     <td>${task.type}</td>
                     <td>${task.estimatedDuration}</td>
                     <td>${task.description}</td>
+                    <td>${task.bauArchetype.frequency}</td>
+                    <td>${task.bauArchetype.runDay}</td>
 
                     <c:choose>
                         <c:when test="${task.user == null}">

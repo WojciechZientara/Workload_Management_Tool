@@ -5,15 +5,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import pl.coderslab.entities.BauReport;
+import pl.coderslab.entities.Task;
 import pl.coderslab.repositories.BauReportRepository;
 import pl.coderslab.repositories.ClientRepository;
+import pl.coderslab.repositories.TaskRepository;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -24,6 +30,29 @@ public class ReportsController {
 
     @Autowired
     ClientRepository clientRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
+
+    @ModelAttribute("frequency")
+    public List<String> getReportFrequency() {
+        return Arrays.asList("Dzienny", "Tygodniowy", "Miesięczny");
+    }
+
+    @ModelAttribute("runDay")
+    public List<String> getWeekly() {
+        List<String> runDay = new ArrayList<>();
+        runDay.add("");
+        runDay.add("Poniedziałek");
+        runDay.add("Wtorek");
+        runDay.add("Środa");
+        runDay.add("Czwartek");
+        runDay.add("Piątek");
+        for (int i = 1; i <= 31; i++) {
+            runDay.add(String.valueOf(i));
+        }
+        return runDay;
+    }
     
     @GetMapping("/admin/reports")
     public String getDisplayReports(Model model) {
@@ -80,6 +109,8 @@ public class ReportsController {
                 reportToUpdate.setName(bauReport.getName());
                 reportToUpdate.setClient(bauReport.getClient());
                 reportToUpdate.setAverageDuration(bauReport.getAverageDuration() * 60);
+                reportToUpdate.setFrequency(bauReport.getFrequency());
+                reportToUpdate.setRunDay(bauReport.getRunDay());
                 bauReportRepository.save(reportToUpdate);
                 response.sendRedirect(request.getContextPath() + "/admin/reports");
             }
@@ -92,6 +123,11 @@ public class ReportsController {
     @GetMapping("/admin/deleteReport/{reportId}")
     public void postIndex(@PathVariable long reportId,
                             HttpServletRequest request, HttpServletResponse response ) throws IOException {
+        List<Task> tasks = taskRepository.findAllTasksByBauReport(bauReportRepository.findOne(reportId));
+        for (Task task : tasks) {
+            taskRepository.clearTaskActivitiesAssociations(task.getId());
+            bauReportRepository.clearReportTasksAssociations(reportId);
+        }
         bauReportRepository.delete(reportId);
         response.sendRedirect(request.getContextPath() + "/admin/reports");
     }

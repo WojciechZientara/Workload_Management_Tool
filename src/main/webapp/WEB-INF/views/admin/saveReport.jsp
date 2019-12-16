@@ -18,6 +18,10 @@
                     <tr><td>Klient: </td><td><form:select path="client" items="${clients}"
                                                        itemValue="id" itemLabel="name" /></td></tr>
                     <tr><td>        </td><td><form:errors path="client" cssClass="error"/></td></tr>
+                    <tr><td>Częstotliwość: </td><td><form:select path="frequency" items="${frequency}"/></td></tr>
+                    <tr><td>        </td><td><form:errors path="frequency" cssClass="error"/></td></tr>
+                    <tr><td>Dzień: </td><td><form:select path="runDay" items="${runDay}"/></td></tr>
+                    <tr><td>        </td><td><form:errors path="runDay" cssClass="error"/></td></tr>
                     <tr><td>Szacowany czas (m): </td><td><form:input path="averageDuration" /></td></tr>
                     <tr><td>        </td><td><form:errors path="averageDuration" cssClass="error"/></td></tr>
                     <tr><td></td><td><input type="submit" value="Zapisz" class="submitBtn"></td></tr>

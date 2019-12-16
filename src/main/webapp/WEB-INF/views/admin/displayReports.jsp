@@ -18,6 +18,8 @@
                         <th>Nazwa</th>
                         <th>Klient</th>
                         <th>Średni czas<br>produkcji (m)</th>
+                        <th>Częstotliwość</th>
+                        <th>Dzień tygodnia /<br>miesiąca</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,6 +29,8 @@
                             <td>${report.name}</td>
                             <td>${report.client.name}</td>
                             <td>${Math.round(report.averageDuration / 60)}</td>
+                            <td>${report.frequency}</td>
+                            <td>${report.runDay}</td>
                             <td>
                                 <a class="btn" href="${pageContext.request.contextPath}/admin/editReport/${report.id}">Edytuj</a>
                                 <a class="btn" href="${pageContext.request.contextPath}/admin/deleteReport/${report.id}" onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>

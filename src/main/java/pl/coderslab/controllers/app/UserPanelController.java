@@ -79,22 +79,55 @@ public class UserPanelController {
             client = clientRepository.findClientWithBauReports(client.getId());
 
             for (BauReport bauReport : client.getBauReportList()) {
-                if (taskRepository.findTaskByBauReport(bauReport) == null &&
-                        taskRepository.findTaskByBauReportCompletedToday(bauReport) == null) {
-                    Task task = new Task();
-                    task.setName(bauReport.getName());
-                    task.setClient(client);
-                    task.setType("BAU");
-                    task.setBauArchetype(bauReport);
-                    task.setEstimatedDuration(bauReport.getAverageDuration());
-                    task.setActivities(new ArrayList<>());
-                    taskRepository.save(task);
+
+                if (isReportDueToday(bauReport)) {
+                    if (taskRepository.findTaskByBauReport(bauReport) == null &&
+                            taskRepository.findTaskByBauReportCompletedToday(bauReport) == null) {
+                        Task task = new Task();
+                        task.setName(bauReport.getName());
+                        task.setClient(client);
+                        task.setType("BAU");
+                        task.setBauArchetype(bauReport);
+                        task.setEstimatedDuration(bauReport.getAverageDuration());
+                        task.setActivities(new ArrayList<>());
+                        taskRepository.save(task);
+                    }
                 }
+
             }
             tasks.addAll(taskRepository.findTasksByClient(client));
             reservedTasks.addAll(taskRepository.findReservedTasksByClient(client, user));
         }
         return Arrays.asList(tasks, reservedTasks);
+    }
+
+    boolean isReportDueToday(BauReport report) {
+
+        if (report.getFrequency().equals("Dzienny")) {
+            return true;
+        } else if (report.getFrequency().equals("Tygodniowy")) {
+            if (report.getRunDay().equals("Poniedziałek")) {
+                report.setRunDay("MONDAY");
+            } else if (report.getRunDay().equals("Wtorek")) {
+                report.setRunDay("TUESDAY");
+            } else if (report.getRunDay().equals("Środa")) {
+                report.setRunDay("WEDNESDAY");
+            } else if (report.getRunDay().equals("Czwartek")) {
+                report.setRunDay("THURSDAY");
+            } else {
+                report.setRunDay("FRIDAY");
+            }
+            String today = LocalDate.now().getDayOfWeek().toString();
+            if (today.equals(report.getRunDay())) {
+                return true;
+            }
+        } else {
+            int today = LocalDate.now().getDayOfMonth();
+            if (today == Integer.valueOf(report.getRunDay())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @GetMapping("/app/userPanel/assignTask/{taskId}")

@@ -31,4 +31,8 @@ public class BauReport {
 
     private long averageDuration;
 
+    private String frequency;
+
+    private String runDay;
+
 }
