@@ -11,8 +11,17 @@
     <%@include file="/WEB-INF/views/app/displayUserConsole.jsp"%>
 
     <div class="workload">
-        <button class="mainBtn" onclick="window.location.href = '${pageContext.request.contextPath}/app/userPanel/createAdHoc';">
-            Dodaj ad-hoc request</button>
+
+        <c:choose>
+            <c:when test="${startTime != null && endTime == null}">
+                <button class="mainBtn" onclick="window.location.href = '${pageContext.request.contextPath}/app/userPanel/createAdHoc';">
+                    Dodaj ad-hoc request</button>
+            </c:when>
+            <c:otherwise>
+                <button class="mainBtn">
+                    Dodaj ad-hoc request</button>
+            </c:otherwise>
+        </c:choose>
         <br><br>
 
         <table class="mainTable">
@@ -43,7 +52,7 @@
                         <c:when test="${task.user == null}">
                             <td style="text-align: center">
                                 <c:if test="${startTime != '' && endTime == null}">
-                                    <a class="btn" href="${pageContext.request.contextPath}/app/userPanel/assignTask/${task.id}">Rezerwuj</a>
+                                    <a class="btn ajax" data-taskid="${task.id}" data-type="assignTask" data-action="${pageContext.request.contextPath}/app/userPanel/assignTask/${task.id}">Rezerwuj</a>
                                 </c:if>
                             </td>
                         </c:when>
@@ -52,7 +61,7 @@
                                 ${task.user.firstName} ${task.user.lastName}
                                 <c:if test="${task.user.id == sessionScope.id}">
                                         <c:if test="${startTime != '' && endTime == null}">
-                                             <a class="btn" href="${pageContext.request.contextPath}/app/userPanel/unassignTask/${task.id}">Anuluj</a>
+                                             <a class="btn ajax" data-taskid="${task.id}" data-type="unassignTask" data-action="${pageContext.request.contextPath}/app/userPanel/unassignTask/${task.id}">Anuluj</a>
                                         </c:if>
                                 </c:if>
                             </td>
@@ -66,6 +75,9 @@
     </div>
 
 </div>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script><%@include file="../../assets/userPanel.js"%></script>
 
 <%@include file="/WEB-INF/assets/footer.jsp"%>
 

@@ -4,7 +4,7 @@
         displayDashboard()
         var interval = setInterval(function (){
             displayDashboard();
-        }, 10 * 1000);
+        }, 60 * 1000);
 });
 
 function displayDashboard() {

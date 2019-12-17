@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import pl.coderslab.dto.TaskReservationDto;
 import pl.coderslab.entities.*;
 import pl.coderslab.repositories.*;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -133,41 +133,53 @@ public class UserPanelController {
     }
 
     @GetMapping("/app/userPanel/assignTask/{taskId}")
-    public String getAssignTask(@PathVariable long taskId,
-                                HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @ResponseBody
+    public TaskReservationDto getAssignTask(@PathVariable long taskId,
+                                            HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
-        User user = userRepository.findOne((long)session.getAttribute("id"));
+        User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
         Task task = taskRepository.findOne(taskId);
+        TaskReservationDto taskReservationDto = new TaskReservationDto();
         if (task.getUser() == null) {
             task.setUser(user);
             task.setDateAssigned(LocalDate.now());
             taskRepository.save(task);
-        }
-        response.sendRedirect(request.getContextPath() + "/app/userPanel");
-        return null;
 
+
+            taskReservationDto.setType("assignTask");
+            taskReservationDto.setUserName(user.getFullName());
+            taskReservationDto.setTaskId(task.getId());
+            taskReservationDto.setDropdownTasks(getDropdownTasks(user));
+
+        }
+        return taskReservationDto;
     }
 
     @GetMapping("/app/userPanel/unassignTask/{taskId}")
-    public String getUnassignTask(@PathVariable long taskId,
+    @ResponseBody
+    public TaskReservationDto getUnassignTask(@PathVariable long taskId,
                                 HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
-        User user = userRepository.findOne((long)session.getAttribute("id"));
+        User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
         Task task = taskRepository.findOne(taskId);
+        TaskReservationDto taskReservationDto = new TaskReservationDto();
         if (task.getUser().getId() == user.getId()) {
             task.setUser(null);
             task.setDateAssigned(null);
             taskRepository.save(task);
-        }
-        response.sendRedirect(request.getContextPath() + "/app/userPanel");
-        return null;
 
+            taskReservationDto.setType("unassignTask");
+            taskReservationDto.setTaskId(task.getId());
+            taskReservationDto.setDropdownTasks(getDropdownTasks(user));
+
+        }
+        return taskReservationDto;
     }
 
     @GetMapping("/app/userPanel/createAdHoc")
-    public String getCreateAdHoc(Model model) {
+    public String getCreateAdHoc(HttpServletRequest request, Model model) {
         model.addAttribute("task", new Task());
         return "app/createAdHoc";
     }
@@ -192,5 +204,15 @@ public class UserPanelController {
         return null;
     }
 
+
+    public Object[][] getDropdownTasks(User user) {
+        List<List<Task>> taskSet = getDailyTaskList(user);
+        Object[][] dropdownTasks = new Object[taskSet.get(1).size()][2];
+        for (int i = 0; i < taskSet.get(1).size(); i++) {
+            dropdownTasks[i][0] = taskSet.get(1).get(i).getId();
+            dropdownTasks[i][1] = taskSet.get(1).get(i).getName();
+        }
+        return dropdownTasks;
+    }
 
 }
