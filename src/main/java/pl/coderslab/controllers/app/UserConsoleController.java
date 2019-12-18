@@ -1,21 +1,20 @@
 package pl.coderslab.controllers.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import pl.coderslab.dto.TaskOperationsDto;
+import pl.coderslab.dto.WorkTimeDto;
 import pl.coderslab.entities.*;
 import pl.coderslab.repositories.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
-@Controller
+@RestController
 public class UserConsoleController {
 
     @Autowired
@@ -31,9 +30,10 @@ public class UserConsoleController {
     BauReportRepository bauReportRepository;
 
     @GetMapping("/app/console/workStart")
-    public String getWorkStart(HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public WorkTimeDto getWorkStart(HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
+        WorkTimeDto workTimeDto = new WorkTimeDto();
         if (activityRepository.findWorkingHours(user) == null) {
             Activity workingHours = new Activity();
             workingHours.setDate(LocalDate.now());
@@ -42,21 +42,27 @@ public class UserConsoleController {
             workingHours.setName("Working Hours");
             activityRepository.save(workingHours);
             setInactive(user);
+
+            workTimeDto.setType("startWork");
+            workTimeDto.setStartTime(workingHours.getStartTime().format(DateTimeFormatter.ofPattern("H:mm:ss")));
         }
-        response.sendRedirect(request.getContextPath() + "/app/userPanel");
-        return null;
+        return workTimeDto;
     }
 
     @GetMapping("/app/console/workEnd")
-    public String getWorkEnd(HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public WorkTimeDto getWorkEnd(HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
+        WorkTimeDto workTimeDto = new WorkTimeDto();
 
         Activity workingHours = activityRepository.findWorkingHours(user);
         if (workingHours != null && workingHours.getEndTime() == null) {
             workingHours.setEndTime(LocalTime.now());
             workingHours.setDuration((Duration.between(workingHours.getStartTime(), workingHours.getEndTime())).getSeconds());
             activityRepository.save(workingHours);
+
+            workTimeDto.setType("endWork");
+            workTimeDto.setEndTime(workingHours.getEndTime().format(DateTimeFormatter.ofPattern("H:mm:ss")));
         }
 
         //close active task
@@ -67,54 +73,60 @@ public class UserConsoleController {
             activityRepository.save(activity);
         }
 
-        response.sendRedirect(request.getContextPath() + "/app/userPanel");
-        return null;
+        return workTimeDto;
     }
 
-    @PostMapping("/app/console/activateTask")
-    public String postActivateTask(@Valid Activity activity, BindingResult result,
-                                   HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    @GetMapping("/app/console/activateTask/{taskId}")
+    public TaskOperationsDto postActivateTask(@PathVariable long taskId,
+                          HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
+        Task selectedTask = taskRepository.findOne(taskId);
 
         Activity workingHours = activityRepository.findWorkingHours(user);
         Activity activeOne = activityRepository.findActiveOne(user);
+        TaskOperationsDto taskOperationsDto = new TaskOperationsDto();
 
         if (workingHours != null && workingHours.getEndTime() == null && /* user is working */
-            activity.getTask() != null && /* selected activity is not 'Inactive' */
-            !activeOne.getName().equals(activity.getTask().getName())) { /* selected activity is not active task */
+                taskId != 0 && /* selected activity is not 'Inactive' */
+                !activeOne.getName().equals(selectedTask.getName())) { /* selected activity is not active task */
 
             if (activeOne != null) {
                 activeOne.setEndTime(LocalTime.now());
                 activeOne.setDuration((Duration.between(activeOne.getStartTime(), activeOne.getEndTime())).getSeconds());
                 activityRepository.save(activeOne);
             }
-            activity.setName(activity.getTask().getName());
-            activity.setUser(user);
-            activity.setDate(LocalDate.now());
-            activity.setStartTime(LocalTime.now());
-            activityRepository.save(activity);
+            Activity newActivity = new Activity();
+            newActivity.setName(selectedTask.getName());
+            newActivity.setUser(user);
+            newActivity.setDate(LocalDate.now());
+            newActivity.setStartTime(LocalTime.now());
+            newActivity.setTask(selectedTask);
+            activityRepository.save(newActivity);
+
+            taskOperationsDto.setType("activateTask");
+            taskOperationsDto.setTaskName(selectedTask.getName());
         }
-        response.sendRedirect(request.getContextPath() + "/app/userPanel");
-        return null;
+        return taskOperationsDto;
     }
 
-
     @GetMapping("/app/console/stopTask")
-    public String getStop(HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public TaskOperationsDto getStop(HttpServletRequest request, HttpServletResponse response ) throws Exception {
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
-
         finishCurrentActivity(user);
-        response.sendRedirect(request.getContextPath() + "/app/userPanel");
-        return null;
+
+        TaskOperationsDto taskOperationsDto = new TaskOperationsDto();
+        taskOperationsDto.setType("stop");
+        return taskOperationsDto;
     }
 
     @GetMapping("/app/console/finishTask")
-    public String getFinish(HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public TaskOperationsDto getFinish(HttpServletRequest request, HttpServletResponse response ) throws Exception {
 
         HttpSession session = request.getSession();
         User user = userRepository.findOneWithClients((long) session.getAttribute("id"));
+        TaskOperationsDto taskOperationsDto = new TaskOperationsDto();
 
         Activity workingHours = activityRepository.findWorkingHours(user);
         if (workingHours != null && workingHours.getEndTime() == null) {
@@ -133,11 +145,14 @@ public class UserConsoleController {
                         bauReport.setAverageDuration(bauReport.getSumOfDuration() / bauReport.getNumberOfRuns());
                         bauReportRepository.save(bauReport);
                     }
+
+                    taskOperationsDto.setType("finish");
+                    taskOperationsDto.setTaskName(task.getName());
+                    taskOperationsDto.setTaskId(task.getId());
                 }
             }
         }
-        response.sendRedirect(request.getContextPath() + "/app/userPanel");
-        return null;
+        return taskOperationsDto;
     }
 
     void setInactive(User user) {

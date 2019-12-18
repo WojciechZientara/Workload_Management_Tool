@@ -13,9 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,7 +65,10 @@ public class UserPanelController {
     private List<List<Task>> getDailyTaskList(User user) {
 
         //remove old reservations
-        List<Task> unclompletedTasks = taskRepository.findAllUncompletedAssignedBeforeToday();
+        List<Task> unclompletedTasks = null;
+        if (taskRepository.findAllUncompletedAssignedBeforeToday() != null) {
+           unclompletedTasks = taskRepository.findAllUncompletedAssignedBeforeToday();
+        }
         for (Task task : unclompletedTasks) {
             task.setUser(null);
             taskRepository.save(task);
@@ -150,7 +151,7 @@ public class UserPanelController {
             taskReservationDto.setType("assignTask");
             taskReservationDto.setUserName(user.getFullName());
             taskReservationDto.setTaskId(task.getId());
-            taskReservationDto.setDropdownTasks(getDropdownTasks(user));
+            taskReservationDto.setDropdownTasks(getDropdownTasks(request));
 
         }
         return taskReservationDto;
@@ -172,7 +173,7 @@ public class UserPanelController {
 
             taskReservationDto.setType("unassignTask");
             taskReservationDto.setTaskId(task.getId());
-            taskReservationDto.setDropdownTasks(getDropdownTasks(user));
+            taskReservationDto.setDropdownTasks(getDropdownTasks(request));
 
         }
         return taskReservationDto;
@@ -205,7 +206,13 @@ public class UserPanelController {
     }
 
 
-    public Object[][] getDropdownTasks(User user) {
+    @GetMapping("/app/userPanel/getDropdownTasks")
+    @ResponseBody
+    public Object[][] getDropdownTasks(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        User user = userRepository.findOneWithClients((long)session.getAttribute("id"));
+
         List<List<Task>> taskSet = getDailyTaskList(user);
         Object[][] dropdownTasks = new Object[taskSet.get(1).size()][2];
         for (int i = 0; i < taskSet.get(1).size(); i++) {

@@ -158,9 +158,6 @@ public class DashboardController {
 
         }
 
-//        model.addAttribute("activities", objActivities);
-//        model.addAttribute("activitiesDto", activitiesDto);
-
         activitiesDto.setObjActivities(objActivities);
 
         for (Task task : activitiesDto.getAssignedTasks()) {
