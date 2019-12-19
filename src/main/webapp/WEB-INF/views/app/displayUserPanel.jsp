@@ -34,7 +34,7 @@
                 <th>Klient</th>
                 <th>Nazwa</th>
                 <th>Typ</th>
-                <th>Czas (s)</th>
+                <th>Czas (m)</th>
                 <th>Opis</th>
                 <th>Częstotliwość</th>
                 <th>Dzień</th>
@@ -48,7 +48,8 @@
                     <td>${task.client.name}</td>
                     <td>${task.name}</td>
                     <td>${task.type}</td>
-                    <td>${task.estimatedDuration}</td>
+                    <c:set var="estimatedMinutes" value="${fn:substringBefore(task.estimatedDuration div 60, '.')}"/>
+                    <td>${estimatedMinutes}</td>
                     <td>${task.description}</td>
                     <td>${task.bauArchetype.frequency}</td>
                     <td>${task.bauArchetype.runDay}</td>

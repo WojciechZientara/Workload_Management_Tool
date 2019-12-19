@@ -15,7 +15,7 @@ function displayDashboard() {
         dataType: "json"
     }).done(function(result) {
         googleChartdisplay(result);
-        fillTable(result.objActivities)
+        fillTable(result.allActivities)
     });
 }
 
@@ -27,6 +27,7 @@ function googleChartdisplay(result) {
 
     function drawStuff() {
 
+        // 1)columns generation
         var data = new google.visualization.DataTable();
         data.addColumn('string', '');
         data.addColumn('number', 'Czas pracy');
@@ -36,6 +37,7 @@ function googleChartdisplay(result) {
             data.addColumn('number', task.name);
         })
 
+        // 2)rows population
         var rows = []
         result.timesMatrix.forEach(function (user) {
             var line = []
@@ -46,10 +48,12 @@ function googleChartdisplay(result) {
         })
         data.addRows(rows)
 
+        // 3) assigning data to particular columns in the chart
         var axis = 1;
         var counter = 1;
         var series = {0: {targetAxisIndex: 0, color: 'lightblue'}};
 
+        // 3.1 actuals
         result.assignedTasks.forEach(function (task) {
             var color = "silver";
             if (task.description === 'Active') {
@@ -67,6 +71,7 @@ function googleChartdisplay(result) {
             }
         })
 
+        // 3.2 estimated
         result.assignedTasks.forEach(function (task) {
             series[counter] = {targetAxisIndex: axis, color:'forestgreen'};
             counter++;
@@ -77,6 +82,7 @@ function googleChartdisplay(result) {
             }
         })
 
+        // 4) chart options
         var options = {
             title: 'Wykres aktywności',
             isStacked: true,
@@ -100,11 +106,13 @@ function googleChartdisplay(result) {
 
         };
 
+        // 5) clear div and generate new chart
         $('#chart_div').clear
         var chart = new google.charts.Bar(document.getElementById('chart_div'));
         chart.draw(data, google.charts.Bar.convertOptions(options));
     };
 }
+
 
 function fillTable(result) {
     $('#table_body').empty();
