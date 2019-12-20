@@ -19,7 +19,22 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Transactional
+    @Query(value = "DELETE FROM user_role WHERE user_id = ?1", nativeQuery = true)
+    void clearUserRoleAssociations(long id);
+
+    @Modifying
+    @Transactional
     @Query(value = "DELETE FROM clients_users WHERE users_id = ?1", nativeQuery = true)
     void clearUsersClientAssociations(long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM tasks WHERE user_id = ?1", nativeQuery = true)
+    void clearUserTasksAssociations(long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM activities WHERE user_id = ?1", nativeQuery = true)
+    void clearUserActivitiesAssociations(long id);
 
 }

@@ -6,9 +6,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.entities.Client;
 import pl.coderslab.entities.Role;
+import pl.coderslab.entities.Task;
 import pl.coderslab.entities.User;
 import pl.coderslab.repositories.ClientRepository;
 import pl.coderslab.repositories.RoleRepository;
+import pl.coderslab.repositories.TaskRepository;
 import pl.coderslab.repositories.UserRepository;
 import pl.coderslab.services.UserService;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,9 @@ public class UserController {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
 
     @ModelAttribute("clients")
     public List<Client> getClients() {
@@ -103,7 +108,7 @@ public class UserController {
                 return "admin/saveUser";
             } else {
                 userRepository.clearUsersClientAssociations(userId);
-                roleRepository.clearUserRoleAssociations(userId);
+                userRepository.clearUserRoleAssociations(userId);
 
                 User userToUpdate = userRepository.findOne(userId);
                 userToUpdate.setId(userId);
@@ -140,8 +145,10 @@ public class UserController {
     @GetMapping("/admin/deleteUser/{userId}")
     public void postIndex(@PathVariable long userId,
                             HttpServletRequest request, HttpServletResponse response ) throws IOException {
+        userRepository.clearUserActivitiesAssociations(userId);
+        userRepository.clearUserTasksAssociations(userId);
         userRepository.clearUsersClientAssociations(userId);
-        roleRepository.clearUserRoleAssociations(userId);
+        userRepository.clearUserRoleAssociations(userId);
         userRepository.delete(userId);
         response.sendRedirect(request.getContextPath() + "/admin/users");
     }

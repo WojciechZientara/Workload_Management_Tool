@@ -17,9 +17,11 @@
         <thead>
         <tr>
             <th>Użytkownik</th>
-            <th>Aktywność</th>
-            <th>Czas Trwania</th>
-            <th>Średni Czas</th>
+            <th>Klient</th>
+            <th>Typ</th>
+            <th>Zadanie</th>
+            <th>Aktualny Czas (m)</th>
+            <th>Szacowany Czas (m)</th>
         </tr>
         </thead>
         <tbody id="table_body">

@@ -33,8 +33,13 @@ function googleChartdisplay(result) {
         data.addColumn('number', 'Czas pracy');
 
         result.assignedTasks.forEach(function (task) {
-            data.addColumn('number', task.name);
-            data.addColumn('number', task.name);
+            if (task.client !== null) {
+                data.addColumn('number', task.client.name + " - " + task.name);
+                data.addColumn('number', task.client.name + " - " + task.name);
+            } else {
+                data.addColumn('number', task.name);
+                data.addColumn('number', task.name);
+            }
         })
 
         // 2)rows population
@@ -128,6 +133,19 @@ function fillTable(result) {
         }
 
         newTr.append($("<td>" + activity[0].firstName + " " + activity[0].lastName + "</td>"))
+
+        if (activity[3].client !== null) {
+            newTr.append($("<td>" + activity[3].client.name + "</td>"))
+        } else {
+            newTr.append($("<td>n/a</td>"))
+        }
+
+        if (activity[3].type !== null) {
+            newTr.append($("<td>" + activity[3].type + "</td>"))
+        } else {
+            newTr.append($("<td>n/a</td>"))
+        }
+
         if (activity[1] === 'Inactive') {
             newTr.append($("<td>" + "Bezczynność" + "</td>"))
         } else {

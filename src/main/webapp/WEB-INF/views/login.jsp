@@ -23,7 +23,7 @@
                         </c:if>
                     </td></tr>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <tr><td></td><td><input type="submit" value="Zaloguj się" class="submitBtn"></td></tr>
+                    <tr><td></td><td><input type="submit" value="Zaloguj się" class="submitBtn mainBtn"></td></tr>
                 </table>
                 <br><br>Nie masz konta? Zgłoś się do admina.
             </form>

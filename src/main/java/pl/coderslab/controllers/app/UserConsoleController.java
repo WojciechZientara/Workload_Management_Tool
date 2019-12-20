@@ -105,7 +105,7 @@ public class UserConsoleController {
             activityRepository.save(newActivity);
 
             taskOperationsDto.setType("activateTask");
-            taskOperationsDto.setTaskName(selectedTask.getName());
+            taskOperationsDto.setTaskName(selectedTask.getClient().getName() + " - " + selectedTask.getName());
         }
         return taskOperationsDto;
     }

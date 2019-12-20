@@ -17,7 +17,14 @@
         <table>
             <tr><td style="text-align: right">Aktywne zadanie: </td>
                 <td>
-                    <label id="activeTaskLabel" style="width: 350px; display: inline-block; padding-left: 5px; color:red;"> ${presentActivity.name} </label>
+                    <c:choose>
+                        <c:when test="${presentActivity.name == 'Inactive'}">
+                            <label id="activeTaskLabel" style="width: 350px; display: inline-block; padding-left: 5px; color:red;">Bezczynność</label>
+                        </c:when>
+                        <c:otherwise>
+                            <label id="activeTaskLabel" style="width: 350px; display: inline-block; padding-left: 5px; color:red;"> ${presentActivity.task.client.name} - ${presentActivity.name} </label>
+                        </c:otherwise>
+                    </c:choose>
                 </td>
                 <td><button class="mainBtn ajax" id="stop" data-type="stop" data-action="${pageContext.request.contextPath}/app/console/stopTask">
                     Przerwij</button></td>
@@ -25,8 +32,6 @@
                     Ukończ</button></td>
             </tr>
 
-<%--            <c:url var="actionUrl" value="console/activateTask" />--%>
-<%--            <form:form method="post" modelAttribute="activity" action="${actionUrl}">--%>
             <form:form method="post" modelAttribute="activity">
                 <tr><td style="text-align: right">Zadania: </td>
                     <td><form:select cssClass="dropdown" path="task" items="${reservedTasks}"

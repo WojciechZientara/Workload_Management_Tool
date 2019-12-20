@@ -16,9 +16,4 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
     @Query(value = "INSERT INTO user_role VALUES (?1, ?2)", nativeQuery = true)
     void createUserRoleAssociation(long userId, long roleId);
 
-    @Modifying
-    @Transactional
-    @Query(value = "DELETE FROM user_role WHERE user_id = ?1", nativeQuery = true)
-    void clearUserRoleAssociations(long userId);
-
 }

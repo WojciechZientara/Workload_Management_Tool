@@ -94,6 +94,7 @@ public class ClientsController {
     public void getDeleteClient(@PathVariable long clientId,
                             HttpServletRequest request, HttpServletResponse response ) throws IOException {
         clientRepository.clearClientsUsersAssociations(clientId);
+        clientRepository.clearClientTasksAssociations(clientId);
         clientRepository.delete(clientId);
         response.sendRedirect(request.getContextPath() + "/admin/clients");
     }

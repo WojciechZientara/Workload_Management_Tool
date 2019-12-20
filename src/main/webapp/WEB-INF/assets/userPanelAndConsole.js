@@ -116,7 +116,7 @@ function activateTask(taskName) {
 
 function stopTask() {
     var activeTaskLabel = $('#activeTaskLabel');
-    $(activeTaskLabel).text("Inactive");
+    $(activeTaskLabel).text("Bezczynność");
     setActivateButton()
 }
 

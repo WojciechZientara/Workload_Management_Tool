@@ -68,7 +68,7 @@
                             </td>
                         </c:when>
                         <c:otherwise>
-                            <td>
+                            <td style="text-align: center">
                                 ${task.user.firstName} ${task.user.lastName}
                                 <c:if test="${task.user.id == sessionScope.id}">
                                     <c:choose>

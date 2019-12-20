@@ -43,7 +43,7 @@
                                         <b>Working Hours</b>
                                     </c:when>
                                     <c:when test="${activity.name == 'Inactive'}">
-                                        Inactive
+                                        Bezczynność
                                     </c:when>
                                     <c:otherwise>
                                         ${activity.task.name}

@@ -47,6 +47,9 @@ public class UserPanelController {
         List<List<Task>> taskSet = getDailyTaskList(user);
 
         model.addAttribute("tasks", taskSet.get(0));
+        for (Task task : taskSet.get(1)) {
+            task.setName(task.getClient().getName() + " - " + task.getName());
+        }
         model.addAttribute("reservedTasks", taskSet.get(1));
 
         Activity workingHours = activityRepository.findWorkingHours(user);
@@ -217,7 +220,7 @@ public class UserPanelController {
         Object[][] dropdownTasks = new Object[taskSet.get(1).size()][2];
         for (int i = 0; i < taskSet.get(1).size(); i++) {
             dropdownTasks[i][0] = taskSet.get(1).get(i).getId();
-            dropdownTasks[i][1] = taskSet.get(1).get(i).getName();
+            dropdownTasks[i][1] = taskSet.get(1).get(i).getClient().getName() + " - " + taskSet.get(1).get(i).getName();
         }
         return dropdownTasks;
     }

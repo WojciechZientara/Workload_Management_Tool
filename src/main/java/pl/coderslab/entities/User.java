@@ -42,7 +42,7 @@ public class User {
     @ManyToMany(mappedBy = "users")
     private List<Client> clients = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Activity> activities;
 
     private String fullName;

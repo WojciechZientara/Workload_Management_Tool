@@ -24,4 +24,9 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query(value = "DELETE FROM clients_users WHERE clients_id = ?1", nativeQuery = true)
     void clearClientsUsersAssociations(long id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM tasks WHERE client_id = ?1", nativeQuery = true)
+    void clearClientTasksAssociations(long id);
+
 }
