@@ -8,7 +8,7 @@ A simple web application helping in tasks and time management.
 * [Features](#features)
 <br><br>
 ## Intro
-The application is meant to help in managing tasks and time spent on their completion. It allows users to reserve tasks from the list of activities due particular day and plan their completion in accordance with estimated production times. Designated admin users have access to the team dashboard showing in real time who works on what, who is behind the schedule and who ahead and react immediately to the changing circumstances.
+The application is meant to help in managing tasks and time spent on their completion. It allows users to reserve tasks from the list of activities due particular day and plan their completion in accordance with estimated production times. Designated admin users have access to the team dashboard showing in real time who works on what, who is behind the schedule and who ahead and react immediately to the changing circumstances.<br>
 The application has been prepared as the Coders Lab's 'Java Developer: Web' course graduation project. 
 <br><br>
 ## Screenshots
@@ -29,20 +29,21 @@ The application has been prepared as the Coders Lab's 'Java Developer: Web' cour
 * JSP & JSTL
 * JavaScript & jQuery
 * AJAX
+* Google Charts library
 <br><br>
 ## Features
-#### Not authenticated
-* Display the landing page
-* Register new account
-* Authenticate (log in)
+#### Not logged in
+* Display the login page
+* Log in
 #### Authenticated user
-* Fill in and submit the donation formulaire
-* Display one's profile
-* See the history of own donations & check their status
-* Modify personal data
+* Start and end work
+* Reserve tasks from the list of due today activities not yet reserved by other team members
+* Start working on a particular task, put it on hold, mark as completed
+* See the record of one's activities
 * Change password
 #### Authenticated admin
-* CRUD operations on charity organisations
+* Access the real-time team workload dashboard
 * CRUD operations on users
-* CRUD operations on administrators
+* CRUD operations on client
+* CRUD operations on reports
 
