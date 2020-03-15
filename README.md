@@ -11,10 +11,11 @@ A simple web application helping in tasks and time management.
 The application is meant to help in managing tasks and time spent on their completion. It allows users to reserve tasks from the list of activities due particular day and plan their completion in accordance with estimated production times. Designated admin users have access to the team dashboard showing in real time who works on what, who is behind the schedule and who ahead and react immediately to the changing circumstances.
 <br><br>
 ## Screenshots
-![OddajRzeczy01.png](https://github.com/WojciechZientara/Oddaj_Rzeczy/blob/master/OddajRzeczy01.png)
-![OddajRzeczy02.png](https://github.com/WojciechZientara/Oddaj_Rzeczy/blob/master/OddajRzeczy02.png)
-![OddajRzeczy03.png](https://github.com/WojciechZientara/Oddaj_Rzeczy/blob/master/OddajRzeczy03.png)
-![OddajRzeczy04.png](https://github.com/WojciechZientara/Oddaj_Rzeczy/blob/master/OddajRzeczy04.png)
+![WMT1.png](https://github.com/WojciechZientara/Workload_Management_Tool/blob/master/WMT1.png)
+![WMT2.png](https://github.com/WojciechZientara/Workload_Management_Tool/blob/master/WMT2.png)
+![WMT3.png](https://github.com/WojciechZientara/Workload_Management_Tool/blob/master/WMT3.png)
+![WMT4.png](https://github.com/WojciechZientara/Workload_Management_Tool/blob/master/WMT4.png)
+![WMT5.png](https://github.com/WojciechZientara/Workload_Management_Tool/blob/master/WMT5.png)
 <br><br>
 ## Technology
 * Spring Boot
