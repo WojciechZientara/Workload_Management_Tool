@@ -22,7 +22,7 @@ The application has been prepared as the Coders Lab's 'Java Developer: Web' cour
 * Spring Web MVC
 * Spring Data JPA
 * Spring Security
-* Hibernate ORM
+* Hibernate
 * MySQL DB
 * Jackson
 * Lombok
