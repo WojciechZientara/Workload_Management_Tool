@@ -1,5 +1,5 @@
-# Workload Management Tool - tasks and time management application
-A simple web application allowing users to donate things they don't need anymore to various charity organisations. 
+# Workload Management Tool
+A simple web application helping in tasks and time management.
 <br><br>
 ## Table of contents
 * [Intro](#intro)
@@ -8,8 +8,7 @@ A simple web application allowing users to donate things they don't need anymore
 * [Features](#features)
 <br><br>
 ## Intro
-The application is meant to provide an easy solution for people who instead of throwing away things being in good condition which they don't use anymore would like to donate them to trusted charity organisations.<br>
-The application consists of two separate layers: the <b>JSP frontend</b> and the <b>REST API</b> backend and has been prepared as the Coders Lab's 'Java Developer: Web' course graduation project.
+The application is meant to help in managing tasks and time spent on their completion. It allows users to reserve tasks from the list of activities due particular day and plan their completion in accordance with estimated production times. Designated admin users have access to the team dashboard showing in real time who works on what, who is behind the schedule and who ahead and react immediately to the changing circumstances.
 <br><br>
 ## Screenshots
 ![OddajRzeczy01.png](https://github.com/WojciechZientara/Oddaj_Rzeczy/blob/master/OddajRzeczy01.png)
