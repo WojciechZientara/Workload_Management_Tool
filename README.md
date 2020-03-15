@@ -9,6 +9,7 @@ A simple web application helping in tasks and time management.
 <br><br>
 ## Intro
 The application is meant to help in managing tasks and time spent on their completion. It allows users to reserve tasks from the list of activities due particular day and plan their completion in accordance with estimated production times. Designated admin users have access to the team dashboard showing in real time who works on what, who is behind the schedule and who ahead and react immediately to the changing circumstances.
+The application has been prepared as the Coders Lab's 'Java Developer: Web' course graduation project. 
 <br><br>
 ## Screenshots
 ![WMT01.png](https://github.com/WojciechZientara/Workload_Management_Tool/blob/master/WMT01.png)
