@@ -18,16 +18,16 @@ The application is meant to help in managing tasks and time spent on their compl
 ![WMT05.png](https://github.com/WojciechZientara/Workload_Management_Tool/blob/master/WMT05.png)
 <br><br>
 ## Technology
-* Spring Boot
-* Spring Web
+* Spring Web MVC
 * Spring Data JPA
 * Spring Security
-* JSON Web Token
+* Hibernate ORM
 * MySQL DB
 * Jackson
 * Lombok
 * JSP & JSTL
 * JavaScript & jQuery
+* AJAX
 <br><br>
 ## Features
 #### Not authenticated
